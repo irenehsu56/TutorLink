@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜尋找適合的家教老師</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/index.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+</head>
+<body>
+    <!-- 引入共用 Header -->
+    {% set active_page = "home" %}
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <main>
+
+        <!-- Hero Section -->
+        <section class="hero">
+
+            <div class="hero-content">
+                <p class="hero-tagline">
+                    專業・可靠・讓學習更有效率
+                </p>
+
+                <h1>
+                    找到最適合的<span>家教老師</span>
+                </h1>
+
+                <p class="hero-description">
+                    依照科目、地區、年級等條件，快速找到符合需求的家教老師，
+                    <br>
+                    讓學習更有效率。
+                </p>
+            </div>
+
+            <!-- Search Section -->
+            <form class="search-box" id="search">
+
+                <div class="search-field">
+                    <i data-lucide="book-open"></i>
+                    <div class="field-content">
+                        <label for="subject">科目</label>
+                        <select id="subject" name="subject">
+                            <option value="">請選擇科目</option>
+                            <option value="math">數學</option>
+                            <option value="english">英文</option>
+                            <option value="chinese">國文</option>
+                            <option value="science">自然</option>
+                            <option value="social">社會</option>
+                            <option value="art">美術</option>
+                            <option value="music">音樂</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="search-field location-field">
+                    <i data-lucide="map-pin"></i>
+
+                    <div class="field-content">
+                        <label for="location-trigger">地區</label>
+
+                        <!-- 點擊後展開地區選單 -->
+                        <button
+                            type="button"
+                            id="location-trigger"
+                            class="location-trigger"
+                            aria-expanded="false"
+                            aria-controls="location-dropdown"
+                        >
+                            <span id="location-text">請選擇地區</span>
+                            <i data-lucide="chevron-down"></i>
+                        </button>
+                    </div>
+
+                    <!-- 預設隱藏的下拉面板 -->
+                    <div id="location-dropdown" class="location-dropdown" hidden>
+                        <div class="location-dropdown-content">
+
+                            <!-- 左邊：縣市 -->
+                            <div class="location-option">
+                                <label for="location">縣市</label>
+                                <select id="location" name="location">
+                                    <option value="">請選擇縣市</option>
+                                    <option value="taipei">臺北市</option>
+                                    <option value="new-taipei">新北市</option>
+                                    <option value="keelung">基隆市</option>
+                                    <option value="taoyuan">桃園市</option>
+                                    <option value="hsinchu-city">新竹市</option>
+                                    <option value="hsinchu-county">新竹縣</option>
+                                    <option value="yilan">宜蘭縣</option>
+                                    <option value="miaoli">苗栗縣</option>
+                                    <option value="taichung">臺中市</option>
+                                    <option value="changhua">彰化縣</option>
+                                    <option value="nantou">南投縣</option>
+                                    <option value="yunlin">雲林縣</option>
+                                    <option value="chiayi-city">嘉義市</option>
+                                    <option value="chiayi-county">嘉義縣</option>
+                                    <option value="tainan">臺南市</option>
+                                    <option value="kaohsiung">高雄市</option>
+                                    <option value="pingtung">屏東縣</option>
+                                    <option value="hualien">花蓮縣</option>
+                                    <option value="taitung">臺東縣</option>
+                                    <option value="penghu">澎湖縣</option>
+                                    <option value="kinmen">金門縣</option>
+                                    <option value="lienchiang">連江縣</option>
+                                </select>
+                            </div>
+
+                            <!-- 右邊：行政區 -->
+                            <div class="location-option">
+                                <label for="district">行政區</label>
+                                <select id="district" name="district" disabled>
+                                    <option value="">請先選擇縣市</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="search-field">
+                    <i data-lucide="chart-no-axes-column-increasing"></i>
+                    <div class="field-content">
+                        <label for="grade">年級</label>
+                        <select id="grade" name="grade">
+                            <option value="">請選擇年級</option>
+                            <option value="elementary">國小</option>
+                            <option value="junior">國中</option>
+                            <option value="senior">高中</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="search-button">
+                    <i data-lucide="search"></i>
+                    搜尋家教老師
+                </button>
+            </form>    
+        </section>
+
+        <!-- Become a Tutor -->
+        <section class="become-tutor" id="become-tutor">
+            <div class="tutor-content">
+
+                <div class="tutor-icon">
+                    <i data-lucide="graduation-cap"></i>
+                </div>
+
+                <h2>分享你的專業，成為家教老師</h2>
+
+                <p class="tutor-description">
+                    加入 TutorLink，讓更多學生看見你的專長。
+                    <br>
+                    建立個人教學檔案，開啟你的家教之旅！
+                </p>
+
+                <div class="tutor-benefits">
+
+                    <div class="tutor-benefit">
+                        <i data-lucide="user-round-check"></i>
+                        <span>建立專屬教師檔案</span>
+                    </div>
+
+                    <div class="tutor-benefit">
+                        <i data-lucide="search-check"></i>
+                        <span>讓學生輕鬆找到你</span>
+                    </div>
+
+                    <div class="tutor-benefit">
+                        <i data-lucide="calendar-check"></i>
+                        <span>自由安排教學時間</span>
+                    </div>
+
+                </div>
+
+                <a href="/become-teacher.html" class="btn-become-tutor">
+                    立即成為家教
+                    <i data-lucide="arrow-right"></i>
+                </a>
+
+            </div>
+        </section>
+
+        <!-- Features -->
+        <section class="features" id="about">
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i data-lucide="users-round"></i>
+                </div>
+                <div>
+                    <h3>專業審核</h3>
+                    <p>嚴選優質家教老師</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <div>
+                    <h3>安全可靠</h3>
+                    <p>保障家長與老師的權益</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i data-lucide="list-filter"></i>
+                </div>
+                <div>
+                    <h3>多元條件</h3>
+                    <p>依需求快速篩選</p>
+                </div>
+            </div>
+
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <i data-lucide="heart"></i>
+                </div>
+                <div>
+                    <h3>真實評價</h3>
+                    <p>參考其他家長的評價</p>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Popular Subjects -->
+        <!--
+        <section class="popular-subjects">
+            <div class="section-header">
+                <h2>熱門科目</h2>
+                <a href="#search">
+                    查看全部科目
+                    <i data-lucide="arrow-right"></i>
+                </a>
+            </div>
+
+            <div class="subject-grid">
+
+                <a href="#search" class="subject-card math">
+                    <i data-lucide="calculator"></i>
+                    <span>數學</span>
+                </a>
+
+                <a href="#search" class="subject-card english">
+                    <i data-lucide="languages"></i>
+                    <span>英文</span>
+                </a>
+
+                <a href="#search" class="subject-card chinese">
+                    <i data-lucide="book-open-text"></i>
+                    <span>國文</span>
+                </a>
+
+                <a href="#search" class="subject-card science">
+                    <i data-lucide="flask-conical"></i>
+                    <span>自然</span>
+                </a>
+
+                <a href="#search" class="subject-card social">
+                    <i data-lucide="globe"></i>
+                    <span>社會</span>
+                </a>
+
+            </div>
+        </section>
+        -->
+
+    </main>
+
+</body>
+</html>

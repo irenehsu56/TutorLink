@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜個人行事曆</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/booking-modal.css">
+    <link rel="stylesheet" href="/static/css/calendar.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/booking-modal.js" defer></script>
+    <script src="/static/js/calendar.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+</head>
+<body class="calendar-auth-checking">
+    <!-- 引入共用 Header -->
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <!-- 引入共用預約視窗 -->
+    {% include "components/booking-modal.html" %}
+
+    <!-- 個人行事曆主內容 -->
+    <main class="calendar-page">
+
+        <!-- 頁面標題 -->
+        <section class="calendar-header">
+            <h1>個人行事曆</h1>
+            <p>查看及管理你的課程預約</p>
+        </section>
+
+        <!-- 當月預約統計 -->
+        <section class="calendar-stats">
+
+            <!-- 已確認 -->
+            <div class="calendar-stat-card">
+                <div class="calendar-stat-label">
+                    <span class="calendar-status-dot confirmed"></span>
+                    <span>已確認</span>
+                </div>
+
+                <strong id="calendar-confirmed-count">0</strong>
+            </div>
+
+            <!-- 待確認 -->
+            <div class="calendar-stat-card">
+                <div class="calendar-stat-label">
+                    <span class="calendar-status-dot pending"></span>
+                    <span>待確認</span>
+                </div>
+
+                <strong id="calendar-pending-count">0</strong>
+            </div>
+
+            <!-- 已取消／已拒絕 -->
+            <div class="calendar-stat-card">
+                <div class="calendar-stat-label">
+                    <span class="calendar-status-dot cancelled"></span>
+                    <span>已取消／已拒絕</span>
+                </div>
+
+                <strong id="calendar-cancelled-count">0</strong>
+            </div>
+
+        </section>
+
+        <!-- 行事曆主要內容 -->
+        <section class="calendar-content">
+
+            <!-- 左側：月曆 -->
+            <div class="calendar-month-panel">
+
+                <!-- 月份切換 -->
+                <div class="calendar-month-header">
+
+                    <button
+                        type="button"
+                        id="calendar-prev-month"
+                        class="calendar-month-nav"
+                        aria-label="上個月"
+                    >
+                        <i data-lucide="chevron-left"></i>
+                    </button>
+
+                    <h2 id="calendar-month-title"></h2>
+
+                    <button
+                        type="button"
+                        id="calendar-next-month"
+                        class="calendar-month-nav"
+                        aria-label="下個月"
+                    >
+                        <i data-lucide="chevron-right"></i>
+                    </button>
+
+                </div>
+
+                <!-- 星期標題 -->
+                <div class="calendar-weekdays">
+                    <span>日</span>
+                    <span>一</span>
+                    <span>二</span>
+                    <span>三</span>
+                    <span>四</span>
+                    <span>五</span>
+                    <span>六</span>
+                </div>
+
+                <!-- 月曆日期：之後由 JavaScript 動態產生 -->
+                <div
+                    id="calendar-days"
+                    class="calendar-days"
+                ></div>
+
+                <!-- 預約狀態說明 -->
+                <div class="calendar-legend">
+
+                    <div class="calendar-legend-item">
+                        <span class="calendar-status-dot confirmed"></span>
+                        <span>已確認</span>
+                    </div>
+
+                    <div class="calendar-legend-item">
+                        <span class="calendar-status-dot pending"></span>
+                        <span>待確認</span>
+                    </div>
+
+                    <div class="calendar-legend-item">
+                        <span class="calendar-status-dot cancelled"></span>
+                        <span>已取消／已拒絕</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- 右側：當日課程清單 -->
+            <div class="calendar-day-panel">
+
+                <!-- 清單標題 -->
+                <div class="calendar-day-header">
+                    <h2 id="calendar-selected-date">當日課程清單</h2>
+                    <p id="calendar-day-count">請先選擇日期</p>
+                </div>
+
+                <!-- 課程清單：之後由 JavaScript 動態產生 -->
+                <div
+                    id="calendar-booking-list"
+                    class="calendar-booking-list"
+                >
+                    <!-- 尚未選擇日期 -->
+                    <div class="calendar-empty">
+                        <i data-lucide="calendar-days"></i>
+                        <p>點選左側月曆日期，查看當天課程</p>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+</body>
+</html>

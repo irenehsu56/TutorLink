@@ -1,0 +1,183 @@
+/* 家教預約系統｜共用預約視窗 */
+/* 隱藏尚未開啟的視窗 */
+.booking-modal[hidden] {
+    display: none !important;
+}
+/* 彈窗外層 */
+.booking-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+}
+/* 背景遮罩 */
+.booking-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.45);
+}
+/* 彈窗內容 */
+.booking-modal-content {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 420px;
+    padding: 30px 28px;
+
+    background-color: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+
+    box-shadow: 0 12px 35px rgba(80, 50, 30, 0.15);
+
+    text-align: center;
+}
+/* 圖示 */
+.booking-modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 20px;
+
+    background-color: #fff0e5;
+    border-radius: 50%;
+    color: var(--primary);
+}
+.booking-modal-icon svg {
+    width: 28px;
+    height: 28px;
+}
+/* 標題 */
+.booking-modal-content h2 {
+    margin: 0 0 12px;
+    color: var(--text-dark);
+    font-size: 20px;
+    font-weight: 700;
+}
+/* 說明文字 */
+.booking-modal-content p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.7;
+}
+/* 操作按鈕 */
+.booking-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+}
+.booking-modal-actions button {
+    flex: 1;
+    padding: 12px 16px;
+
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+/* 共用預約視窗｜返回按鈕 */
+#booking-accept-cancel,
+#booking-reject-cancel,
+#booking-cancel-back {
+    border: 1px solid var(--border);
+    background-color: var(--white);
+    color: var(--text-gray);
+}
+#booking-accept-cancel:hover,
+#booking-reject-cancel:hover,
+#booking-cancel-back:hover {
+    background-color: #f7f7f7;
+}
+/* 共用預約視窗｜確認按鈕 */
+#booking-accept-confirm,
+#booking-reject-confirm,
+#booking-cancel-confirm {
+    border: 1px solid var(--primary);
+    background-color: var(--primary);
+    color: var(--white);
+}
+#booking-accept-confirm:hover,
+#booking-reject-confirm:hover,
+#booking-cancel-confirm:hover {
+    background-color: var(--primary-dark);
+}
+
+/* 家教預約系統｜預約錯誤通知 */
+.booking-error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px;
+
+    background: #fff0e4;
+    color: var(--primary);
+    border-radius: 50%;
+}
+.booking-error-icon svg {
+    width: 30px;
+    height: 30px;
+}
+#booking-error-modal .booking-modal-content {
+    text-align: center;
+}
+#booking-error-modal .booking-modal-actions {
+    justify-content: center;
+    margin-top: 24px;
+}
+/* 確認按鈕 */
+#booking-error-modal .booking-modal-actions button {
+    min-width: 130px;
+    padding: 12px 24px;
+
+    background: var(--primary);
+    color: var(--white);
+
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+#booking-error-modal .booking-modal-actions button:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+#booking-error-modal .booking-modal-actions button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+#booking-error-message {
+    color: var(--text-gray);
+    line-height: 1.7;
+    white-space: pre-wrap;
+}
+
+/* RWD 手機 */
+@media (max-width: 600px) {
+    .booking-modal-content {
+        padding: 26px 20px;
+    }
+    .booking-modal-content h2 {
+        font-size: 18px;
+    }
+}

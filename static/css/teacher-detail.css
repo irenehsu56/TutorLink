@@ -1,0 +1,1129 @@
+/* TutorLink｜老師詳細介紹頁面 */
+
+/* 主要容器 */
+.teacher-detail-page {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 36px 30px 80px;
+}
+/* 麵包屑 */
+.detail-breadcrumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 26px;
+    color: var(--text-gray);
+    font-size: 14px;
+}
+.detail-breadcrumb a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.2s;
+}
+.detail-breadcrumb a:hover,
+.detail-breadcrumb > span {
+    color: var(--primary);
+}
+.detail-breadcrumb > span {
+    font-weight: 600;
+}
+.detail-breadcrumb svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* 共用資訊卡片 */
+.detail-card {
+    margin-bottom: 24px;
+    padding: 36px 42px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    box-shadow: 0 8px 28px rgba(91, 56, 26, 0.035);
+}
+.detail-card[hidden] {
+    display: none;
+}
+
+/* 老師基本資料 */
+.detail-profile {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    padding: 44px 42px;
+}
+.detail-profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 140px;
+    height: 140px;
+    overflow: hidden;
+    background: #ffe8d5;
+    color: var(--primary);
+    border: none;
+    border-radius: 50%;
+}
+.detail-profile-avatar.male {
+    background: #e4eef9;
+    color: #4275ad;
+}
+.detail-profile-avatar.female {
+    background: #fce4ec;
+    color: #c45a80;
+}
+.detail-profile-avatar svg {
+    width: 64px;
+    height: 64px;
+}
+.detail-profile-avatar img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.detail-profile-info {
+    flex: 1;
+    min-width: 0;
+}
+.detail-profile-info h1 {
+    margin-bottom: 16px;
+    font-size: 29px;
+    font-weight: 800;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+.detail-profile-meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px 24px;
+    margin-bottom: 12px;
+    color: var(--text-gray);
+    font-size: 15px;
+}
+.detail-profile-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.detail-profile-meta svg {
+    flex-shrink: 0;
+    width: 18px;
+    height: 18px;
+    color: var(--primary);
+}
+/* 科目與年級標籤 */
+.detail-profile-tags {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.detail-profile-info > .detail-profile-tags {
+    margin-top: 0;
+}
+.detail-subject-tag,
+.detail-grade-tag {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+}
+.detail-subject-tag {
+    background: #ffeadb;
+    color: #b45d27;
+}
+.detail-grade-tag {
+    background: #f3f1ef;
+    color: #77716c;
+}
+/* 自我介紹 */
+.detail-profile-intro {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 12px;
+    margin-bottom: 20px;
+    color: var(--text-gray);
+    font-size: 15px;
+    font-weight: 400;
+}
+.detail-profile-intro > svg {
+    flex-shrink: 0;
+    align-self: flex-start;
+    width: 18px;
+    height: 18px;
+    margin-top: 4px;
+    color: var(--primary);
+}
+.detail-profile-intro .detail-intro {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+/* 老師操作按鈕 */
+.detail-profile-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-self: center;
+    flex-shrink: 0;
+    gap: 12px;
+}
+.detail-btn-contact,
+.detail-btn-favorite,
+.detail-btn-edit,
+.detail-btn-delete {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    min-width: 150px;
+    min-height: 46px;
+    padding: 11px 20px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+}
+.detail-btn-contact svg,
+.detail-btn-favorite svg,
+.detail-btn-edit svg,
+.detail-btn-delete svg {
+    width: 19px;
+    height: 19px;
+}
+.detail-btn-contact,
+.detail-btn-edit {
+    background: var(--primary);
+    color: var(--white);
+    border: 1px solid var(--primary);
+}
+.detail-btn-edit {
+    text-decoration: none;
+}
+.detail-btn-edit:hover {
+    background: var(--primary-dark);
+}
+.detail-btn-favorite {
+    background: var(--white);
+    color: var(--primary);
+    border: 1px solid var(--primary);
+}
+.detail-btn-favorite.is-favorited {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+.detail-btn-favorite.is-favorited svg {
+    fill: currentColor;
+}
+/* 刪除老師資料 */
+.detail-btn-delete {
+    background: #fff5f5;
+    color: #d9534f;
+    border: 1px solid #efb7b5;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+.detail-btn-delete:hover {
+    background: #ffe7e7;
+    border-color: #d9534f;
+}
+.detail-btn-delete:focus-visible {
+    outline: 2px solid #d9534f;
+    outline-offset: 3px;
+}
+.detail-btn-edit[hidden],
+.detail-btn-delete[hidden],
+.detail-btn-contact[hidden],
+.detail-btn-favorite[hidden] {
+    display: none;
+}
+.detail-btn-contact:disabled,
+.detail-btn-favorite:disabled {
+    opacity: 1;
+    cursor: default;
+}
+
+/* 教學資訊 */
+.detail-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    font-size: 23px;
+    font-weight: 800;
+}
+.detail-section-title svg {
+    width: 25px;
+    height: 25px;
+    color: var(--primary);
+}
+.detail-teaching-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 40px;
+}
+.detail-teaching-item {
+    min-width: 0;
+    padding: 22px 24px;
+    background: #fffaf6;
+    border: 1px solid #f8e8da;
+    border-radius: 16px;
+}
+.detail-teaching-item h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+    color: var(--text-gray);
+    font-size: 15px;
+    font-weight: 600;
+}
+.detail-teaching-item h3 svg {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+    color: var(--primary);
+}
+.detail-teaching-item p {
+    font-size: 17px;
+    font-weight: 600;
+}
+.detail-teaching-item .detail-price {
+    color: var(--primary);
+    font-size: 22px;
+    font-weight: 800;
+}
+#detail-teaching-experience {
+    padding-left: 8px;
+}
+
+/* 授課地區 */
+.detail-location-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.detail-location-list span {
+    display: inline-flex;
+    align-items: center;
+    padding: 11px 18px;
+    background: #fff6ee;
+    border: 1px solid #ffdec5;
+    border-radius: 12px;
+    color: #a95b2d;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* 可授課時段 */
+.detail-schedule-scroll {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.detail-schedule-table {
+    width: 100%;
+    min-width: 760px;
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 0;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    text-align: center;
+}
+.detail-schedule-table tr > * {
+    width: 12.5%;
+}
+.detail-schedule-table th,
+.detail-schedule-table td {
+    padding: 18px 10px;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+}
+.detail-schedule-table tr > :last-child {
+    border-right: none;
+}
+.detail-schedule-table tbody tr:last-child > * {
+    border-bottom: none;
+}
+.detail-schedule-table thead th {
+    background: #fff0e3;
+    color: #9d572d;
+    font-weight: 700;
+}
+.detail-schedule-table tbody th {
+    background: #fffaf6;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+.detail-schedule-table tbody td {
+    background: var(--white);
+    color: #b0aaa5;
+}
+.detail-schedule-table tbody td.available {
+    background: #fff4e9;
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+.schedule-mobile-text {
+    display: none;
+}
+
+/* 預約上課按鈕 */
+.detail-booking-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+.detail-booking-actions[hidden] {
+    display: none;
+}
+.detail-booking-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 12px 26px;
+    background: var(--primary);
+    color: var(--white);
+    border: 1px solid var(--primary);
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+.detail-booking-button:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+.detail-booking-button svg {
+    width: 19px;
+    height: 19px;
+}
+.detail-booking-button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* 刪除老師資料確認視窗 */
+.detail-delete-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
+}
+.detail-delete-modal[hidden] {
+    display: none;
+}
+.detail-delete-modal-content {
+    width: 100%;
+    max-width: 420px;
+    padding: 36px 30px;
+    background: var(--white);
+    border-radius: 22px;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.15);
+    text-align: center;
+}
+.detail-delete-modal-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+    background: #fff0f0;
+    color: #d9534f;
+    border-radius: 50%;
+}
+.detail-delete-modal-icon svg {
+    width: 30px;
+    height: 30px;
+}
+.detail-delete-modal-content h2 {
+    margin-bottom: 16px;
+    color: var(--text-dark);
+    font-size: 22px;
+    font-weight: 800;
+}
+.detail-delete-modal-content p {
+    margin-bottom: 12px;
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.8;
+}
+.detail-delete-error {
+    color: #d9534f !important;
+    font-weight: 600;
+}
+.detail-delete-error[hidden] {
+    display: none;
+}
+.detail-delete-modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 26px;
+}
+.detail-delete-modal-actions button {
+    flex: 1;
+    min-height: 46px;
+    border-radius: 30px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#detail-delete-cancel {
+    background: #f3f1ef;
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+}
+#detail-delete-cancel:hover {
+    background: #e8e3df;
+}
+#detail-delete-confirm {
+    background: #d9534f;
+    color: var(--white);
+    border: 1px solid #d9534f;
+}
+#detail-delete-confirm:hover {
+    background: #bd403c;
+}
+.detail-delete-modal-actions button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+.detail-delete-modal-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 尚未建立老師資料提示 */
+.teacher-empty-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100dvh - 280px);
+    padding: 40px 20px;
+}
+.teacher-empty-card {
+    width: 100%;
+    max-width: 600px;
+    padding: 56px 48px;
+    background: var(--white);
+    border: 1px solid #ffd8be;
+    border-radius: 24px;
+    text-align: center;
+}
+.teacher-empty-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 28px;
+    background: #fff0e5;
+    color: var(--primary);
+    border-radius: 50%;
+}
+.teacher-empty-icon svg {
+    width: 48px;
+    height: 48px;
+}
+.teacher-empty-card h2 {
+    margin-bottom: 18px;
+    color: var(--text-dark);
+    font-size: 28px;
+    font-weight: 800;
+}
+.teacher-empty-card p {
+    max-width: 430px;
+    margin: 0 auto 36px;
+    color: var(--text-gray);
+    font-size: 16px;
+    line-height: 1.9;
+}
+.teacher-empty-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    max-width: 320px;
+    min-height: 56px;
+    padding: 14px 24px;
+    background: var(--primary);
+    color: var(--white);
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background 0.2s, transform 0.2s;
+}
+.teacher-empty-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+.teacher-empty-button svg {
+    width: 20px;
+    height: 20px;
+}
+.teacher-empty-button:focus-visible {
+    outline: 3px solid rgba(255, 121, 40, 0.4);
+    outline-offset: 4px;
+}
+
+/* 預約家教課程 Modal */
+.booking-modal[hidden] {
+    display: none;
+}
+.booking-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.booking-modal-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(36, 36, 36, 0.5);
+}
+.booking-modal-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 560px;
+    max-height: calc(100dvh - 32px);
+    overflow-y: auto;
+    padding: 24px;
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+/* Modal 標題 */
+.booking-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+.booking-modal-header h2 {
+    margin-bottom: 4px;
+    color: var(--text-dark);
+    font-size: 22px;
+}
+.booking-modal-header p {
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.6;
+}
+#booking-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: var(--background);
+    color: var(--text-gray);
+    border: none;
+    border-radius: 50%;
+}
+#booking-modal-close:hover {
+    color: var(--primary);
+}
+/* 表單欄位 */
+.booking-form-group {
+    margin-bottom: 16px;
+}
+.booking-form-group > label,
+.booking-duration-group legend {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
+}
+.booking-form-group select {
+    width: 100%;
+    padding: 12px 42px 12px 14px;
+
+    /* 隱藏瀏覽器原生箭頭 */
+    appearance: none;
+    -webkit-appearance: none;
+
+    /* 自訂下拉箭頭 */
+    background-color: var(--white);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23242424' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 22px center;
+    background-size: 16px;
+
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+}
+.booking-form-group select:focus {
+    border-color: var(--primary);
+}
+
+
+/* ========================================
+   上課日期下拉選單
+======================================== */
+
+.booking-date-picker {
+    position: relative;
+    width: 100%;
+}
+
+/* 日期選擇按鈕 */
+.booking-date-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 14px;
+
+    background: var(--white);
+    color: var(--text-gray);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+
+.booking-date-trigger:hover,
+.booking-date-trigger[aria-expanded="true"] {
+    border-color: var(--primary);
+}
+
+.booking-date-trigger:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* 已選擇日期 */
+.booking-date-trigger.has-value {
+    color: var(--text-dark);
+}
+
+.booking-date-trigger svg {
+    flex-shrink: 0;
+    width: 19px;
+    height: 19px;
+    color: var(--primary);
+}
+
+/* 預約月曆 */
+.booking-calendar {
+    width: 100%;
+    margin-top: 8px;
+    padding: 12px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+/* 收合月曆 */
+.booking-calendar[hidden] {
+    display: none;
+}
+/* 月份標題與切換按鈕 */
+.booking-calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+.booking-calendar-nav {
+    width: 30px;
+    height: 30px;
+
+    background: var(--background);
+    color: var(--text-dark);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.booking-calendar-nav:hover:not(:disabled) {
+    color: var(--primary);
+}
+.booking-calendar-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+/* 日期排列 */
+.booking-calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+}
+/* 星期標題 */
+.booking-calendar-weekday {
+    padding: 4px 0;
+    color: var(--text-gray);
+    font-size: 12px;
+    text-align: center;
+}
+/* 日期按鈕 */
+.booking-calendar-day {
+    width: 100%;
+    min-width: 0;
+    height: 38px;
+
+    background: var(--background);
+    color: var(--text-gray);
+    border: none;
+    border-radius: 8px;
+
+    font-size: 13px;
+    cursor: pointer;
+}
+/* 可授課日期 */
+.booking-calendar-day.available {
+    background: #fff0e4;
+    color: var(--primary);
+    font-weight: 600;
+}
+.booking-calendar-day.available:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+/* 已選擇日期 */
+.booking-calendar-day.selected,
+.booking-calendar-day.selected:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+/* 不可授課日期 */
+.booking-calendar-day:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 課程長度 */
+.booking-duration-group {
+    min-width: 0;
+    padding: 0;
+    border: none;
+}
+.booking-duration-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+.booking-duration-options label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 10px 6px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.booking-duration-options label:has(input:checked) {
+    background: #fff0e4;
+    color: var(--primary);
+    border-color: var(--primary);
+}
+.booking-duration-options input {
+    accent-color: var(--primary);
+}
+
+/* 預估金額 */
+.booking-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    padding: 12px 16px;
+    background: var(--background);
+    border-radius: 12px;
+}
+.booking-total span {
+    color: var(--text-gray);
+    font-size: 14px;
+}
+.booking-total strong {
+    color: var(--primary);
+    font-size: 20px;
+}
+/* 表單錯誤訊息 */
+.booking-form-error {
+    margin-bottom: 16px;
+    color: #d93025;
+    font-size: 14px;
+}
+.booking-form-error[hidden] {
+    display: none;
+}
+/* 表單操作按鈕 */
+.booking-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+.booking-form-actions button {
+    padding: 10px 18px;
+    border-radius: 10px;
+    font-weight: 600;
+}
+#booking-form-cancel {
+    background: var(--white);
+    color: var(--text-gray);
+    border: 1px solid var(--border);
+}
+#booking-form-submit {
+    background: var(--primary);
+    color: var(--white);
+    border: 1px solid var(--primary);
+}
+#booking-form-submit:hover {
+    background: var(--primary-dark);
+}
+
+/* RWD：平板 */
+@media (max-width: 1100px) {
+    .teacher-detail-page {
+        padding: 30px 24px 65px;
+    }
+    .detail-card {
+        padding: 30px;
+    }
+    .detail-profile {
+        flex-wrap: nowrap;
+        gap: 24px;
+    }
+    .detail-profile-actions {
+        width: auto;
+        flex-direction: column;
+        justify-content: flex-end;
+        flex-shrink: 0;
+    }
+    .detail-teaching-grid {
+        gap: 20px;
+    }
+}
+
+/* RWD：手機 */
+@media (max-width: 600px) {
+    .teacher-detail-page {
+        padding: 22px 15px 50px;
+    }
+    .detail-breadcrumb {
+        gap: 7px;
+        margin-bottom: 20px;
+        font-size: 12px;
+    }
+    .detail-card {
+        margin-bottom: 16px;
+        padding: 24px 18px;
+        border-radius: 18px;
+    }
+
+    /* 老師基本資料 */
+    .detail-profile {
+        flex-direction: column;
+        align-items: center;
+        gap: 18px;
+        text-align: center;
+    }
+    .detail-profile-avatar {
+        width: 112px;
+        height: 112px;
+    }
+    .detail-profile-info {
+        width: 100%;
+    }
+    .detail-profile-info h1 {
+        font-size: 23px;
+    }
+    .detail-profile-meta {
+        justify-content: center;
+        gap: 10px 16px;
+        font-size: 13px;
+    }
+    .detail-profile-tags {
+        justify-content: center;
+    }
+    .detail-profile-intro {
+        margin-top: 16px;
+        margin-bottom: 18px;
+        text-align: left;
+    }
+    .detail-profile-intro .detail-intro {
+        font-size: 14px;
+        line-height: 1.8;
+    }
+    .detail-profile-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+    .detail-btn-contact,
+    .detail-btn-favorite,
+    .detail-btn-edit,
+    .detail-btn-delete {
+        width: 100%;
+    }
+
+    /* 教學資訊 */
+    .detail-section-title {
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
+    .detail-teaching-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+    .detail-teaching-item {
+        padding: 18px;
+    }
+
+    /* 授課地區 */
+    .detail-location-list {
+        gap: 9px;
+    }
+    .detail-location-list span {
+        padding: 9px 12px;
+        font-size: 13px;
+    }
+
+    /* 授課時段表格 */
+    .detail-schedule-scroll {
+        width: 100%;
+        overflow-x: visible;
+    }
+    .detail-schedule-table {
+        width: 100%;
+        min-width: 0;
+        table-layout: fixed;
+        border-collapse: collapse;
+    }
+    .detail-schedule-table th,
+    .detail-schedule-table td {
+        padding: 12px 2px;
+        font-size: 12px;
+        text-align: center;
+        white-space: nowrap;
+    }
+    .detail-schedule-table td.available {
+        background: #fff0e4;
+        color: var(--primary);
+        font-weight: 700;
+    }
+    .schedule-desktop-text {
+        display: none;
+    }
+    .schedule-mobile-text {
+        display: inline;
+    }
+
+    /* 刪除老師資料確認視窗 */
+    .detail-delete-modal-content {
+        padding: 28px 20px;
+        border-radius: 18px;
+    }
+    .detail-delete-modal-content h2 {
+        font-size: 19px;
+    }
+    .detail-delete-modal-actions {
+        gap: 10px;
+    }
+
+    /* 尚未建立老師資料 */
+    .teacher-empty-profile {
+        min-height: calc(100dvh - 220px);
+        padding: 24px 0;
+    }
+    .teacher-empty-card {
+        padding: 40px 24px;
+        border-radius: 20px;
+    }
+    .teacher-empty-icon {
+        width: 80px;
+        height: 80px;
+    }
+    .teacher-empty-icon svg {
+        width: 40px;
+        height: 40px;
+    }
+    .teacher-empty-card h2 {
+        font-size: 23px;
+    }
+    .teacher-empty-card p {
+        font-size: 14px;
+    }
+
+    /* 預約視窗 */
+    .booking-modal {
+        padding: 10px;
+    }
+    .booking-modal-content {
+        max-height: calc(100dvh - 20px);
+        padding: 18px 14px;
+        border-radius: 16px;
+    }
+    .booking-modal-header h2 {
+        font-size: 21px;
+    }
+    .booking-calendar {
+        padding: 8px;
+    }
+    .booking-calendar-grid {
+        gap: 3px;
+    }
+    .booking-calendar-day {
+        height: 34px;
+        font-size: 12px;
+    }
+    .booking-form-group {
+        margin-bottom: 14px;
+    }
+    .booking-form-actions button {
+        flex: 1;
+        padding: 12px 8px;
+    }
+}

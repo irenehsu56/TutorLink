@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜我的訊息</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/booking-modal.css">
+    <link rel="stylesheet" href="/static/css/messages.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/booking-modal.js" defer></script>
+    <script src="/static/js/messages.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+</head>
+<body>
+    <!-- 引入共用 Header -->
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <!-- 引入共用預約視窗 -->
+    {% include "components/booking-modal.html" %}
+
+    <!-- 我的訊息 -->
+    <main class="messages-page">
+        <div class="messages-container">
+
+            <!-- 頁面標題 -->
+            <div class="messages-heading">
+                <h1>我的訊息</h1>
+                <p>在這裡查看與老師、學生的對話紀錄</p>
+            </div>
+
+            <!-- 聊天主要區域 -->
+            <section class="messages-layout">
+
+                <!-- 左側：對話列表 -->
+                <aside class="conversations-panel">
+
+                    <div class="conversations-header">
+                        <h2>所有對話</h2>
+                    </div>
+
+                    <!-- 後續由 JavaScript 動態載入 -->
+                    <div id="conversations-list" class="conversations-list">
+                        <p class="messages-placeholder">載入對話中...</p>
+                    </div>
+
+                </aside>
+
+                <!-- 右側：聊天內容 -->
+                <section class="chat-panel">
+
+                    <!-- 尚未選擇對話 -->
+                    <div id="chat-empty-state" class="chat-empty-state">
+                        <i data-lucide="message-circle"></i>
+                        <h2>開始聊天</h2>
+                        <p>選擇左側的對話，即可查看訊息內容</p>
+                    </div>
+
+                    <!-- 選擇對話後顯示 -->
+                    <div id="chat-content" class="chat-content" hidden>
+                 
+                    <!-- 聊天對象 -->
+                    <div class="chat-header">
+
+                        <!-- 手機版返回對話列表 -->
+                        <button type="button" id="chat-back-button" class="chat-back-button" aria-label="返回對話列表">
+                            <i data-lucide="arrow-left"></i>
+                        </button>
+
+                        <h2 id="chat-partner-name"></h2>
+
+                    </div>
+
+                        <!-- 訊息紀錄 -->
+                        <div id="chat-messages" class="chat-messages"></div>
+
+                        <!-- 輸入訊息 -->
+                        <form id="chat-form" class="chat-form">
+
+                            <input
+                                type="text"
+                                id="chat-input"
+                                placeholder="輸入訊息..."
+                                maxlength="2000"
+                                autocomplete="off"
+                                required
+                            >
+
+                            <button type="submit" class="chat-send-button">
+                                <i data-lucide="send"></i>
+                                <span>傳送</span>
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </section>
+            </section>
+
+        </div>
+    </main>
+
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Python 虛擬環境
+venv/
+.venv/
+
+# Python 暫存檔
+__pycache__/
+*.pyc
+
+# 環境變數與敏感資料
+.env
+.env.*
+!.env.example
+
+# macOS
+.DS_Store
+
+# VS Code 本機設定
+.vscode/

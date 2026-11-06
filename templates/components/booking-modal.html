@@ -1,0 +1,122 @@
+<!-- 家教預約系統｜共用視窗 -->
+
+<!-- 老師接受預約確認視窗 -->
+<div id="booking-accept-modal" class="booking-modal" hidden>
+    <div class="booking-modal-overlay"></div>
+
+    <div class="booking-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-accept-title">
+
+        <div class="booking-modal-icon">
+            <i data-lucide="calendar-check"></i>
+        </div>
+
+        <h2 id="booking-accept-title">確定要接受這筆預約嗎？</h2>
+
+        <p>接受後，這筆預約將變更為已確認。</p>
+
+        <div class="booking-modal-actions">
+            <button type="button" id="booking-accept-cancel">
+                返回
+            </button>
+
+            <button type="button" id="booking-accept-confirm">
+                確認接受
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- 老師拒絕預約確認視窗 -->
+<div id="booking-reject-modal" class="booking-modal" hidden>
+    <div class="booking-modal-overlay"></div>
+
+    <div class="booking-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-reject-title">
+
+        <div class="booking-modal-icon">
+            <i data-lucide="calendar-x"></i>
+        </div>
+
+        <h2 id="booking-reject-title">確定要拒絕這筆預約嗎？</h2>
+
+        <p>拒絕後，這筆預約將無法再接受。</p>
+
+        <div class="booking-modal-actions">
+            <button type="button" id="booking-reject-cancel">
+                返回
+            </button>
+
+            <button type="button" id="booking-reject-confirm">
+                確認拒絕
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- 學生取消預約確認視窗 -->
+<div id="booking-cancel-modal" class="booking-modal" hidden>
+    <div class="booking-modal-overlay"></div>
+
+    <div class="booking-modal-content"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="booking-cancel-title">
+
+        <div class="booking-modal-icon">
+            <i data-lucide="calendar-x"></i>
+        </div>
+
+        <h2 id="booking-cancel-title">確定要取消這筆預約嗎？</h2>
+
+        <p>取消後，這筆預約將無法恢復。</p>
+
+        <div class="booking-modal-actions">
+            <button type="button" id="booking-cancel-back">
+                返回
+            </button>
+
+            <button type="button" id="booking-cancel-confirm">
+                確認取消
+            </button>
+        </div>
+
+    </div>
+</div>
+
+<!-- 預約錯誤通知視窗 -->
+<div class="booking-modal" id="booking-error-modal" hidden>
+    <div class="booking-modal-overlay"></div>
+
+    <div
+        class="booking-modal-content"
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby="booking-error-title"
+        aria-describedby="booking-error-message"
+    >
+        <div class="booking-error-icon">
+            <i data-lucide="calendar-x"></i>
+        </div>
+
+        <h2 id="booking-error-title">預約時間衝突</h2>
+
+        <p id="booking-error-message"></p>
+
+        <div class="booking-modal-actions">
+            <button
+                type="button"
+                id="booking-error-close"
+                class="booking-modal-confirm"
+            >
+                我知道了
+            </button>
+        </div>
+    </div>
+</div>

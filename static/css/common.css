@@ -1,0 +1,299 @@
+/* Global 全域設定 */
+:root {
+    --primary: #ff7928; /* 主要顏色（按鈕、Icon） */
+    --primary-dark: #e9691c; /* 滑鼠移入 */
+    --text-dark: #242424; /* 主要文字 */
+    --text-gray: #777777; /* 次要文字 */
+    --background: #fff8f0;
+    --white: #ffffff;
+    --border: #f4e3d5;
+}
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html {
+    scroll-behavior: smooth; /* 頁面平滑捲動 */
+    scroll-padding-top: 100px;
+}
+body {
+    font-family: "Noto Sans TC", "Microsoft JhengHei", sans-serif; /* 設定字體與備用字體 */
+    color: var(--text-dark);
+    background: linear-gradient( /* 網頁背景：線性漸層 */
+        180deg,
+        #fffaf5 0%,
+        #fff5e9 55%,
+        #fffaf5 100%
+    );
+    min-height: 100vh;
+}
+a {
+    text-decoration: none;
+    color: inherit;
+}
+button,
+select {
+    font: inherit;
+}
+button {
+    cursor: pointer;
+}
+
+/* Header 導覽列 */
+.site-header {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid var(--border);
+    position: sticky; /* 捲動時讓導覽列保持在指定位置 */
+    top: 0;
+    z-index: 100;
+}
+.navbar {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 40px;
+    min-height: 76px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+/* Logo */
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 30px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+.logo svg {
+    width: 38px;
+    height: 38px;
+    color: var(--primary);
+}
+.logo strong {
+    color: var(--primary);
+}
+
+/* Navigation */
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 42px;
+    height: 76px;
+}
+.nav-links a {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 600;
+    position: relative;
+    transition: color 0.2s;
+}
+.nav-links a:hover,
+.nav-links a.active {
+    color: var(--primary);
+}
+.nav-links a.active::after { /* 導覽列文字下方那條橘色底線 */
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--primary);
+}
+
+/* Login / Register */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.icon-button {
+    border: none;
+    background: transparent; /* 讓按鈕背景透明 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+}
+.icon-button svg {
+    width: 24px;
+    height: 24px;
+}
+.btn-login,
+.btn-register {
+    padding: 10px 26px;
+    border-radius: 30px; /* 設定按鈕圓角 */
+    font-weight: 600;
+    white-space: nowrap;
+}
+.btn-login {
+    border: 1px solid #d89b72;
+    background: var(--white);
+}
+.btn-register {
+    background: var(--primary);
+    color: var(--white);
+    border: 1px solid var(--primary);
+}
+.btn-register:hover, /* :hover：滑鼠移入效果 */
+.btn-login:hover {
+    opacity: 0.85; /* opacity 代表透明度 */
+}
+
+/* Header 私訊入口 */
+/* 確保未登入時，訊息入口及未讀徽章不會顯示 */
+.header-message-link[hidden],
+.message-unread-badge[hidden] {
+    display: none !important;
+}
+
+/* Header 未讀訊息數字 */
+/* 訊息圖示作為未讀數字的定位基準 */
+.header-message-link {
+    position: relative;
+}
+/* 未讀訊息數字徽章 */
+.message-unread-badge {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+
+    border-radius: 999px;
+    background-color: #e53935;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+
+    pointer-events: none;
+}
+
+/* RWD 平板 */
+@media (min-width: 801px) and (max-width: 1100px) {
+    .navbar {
+        padding: 0 20px;
+        min-height: 76px;
+
+        flex-wrap: nowrap;
+        justify-content: space-between;
+        gap: 12px;
+    }
+
+    /* Logo */
+    .logo {
+        font-size: 24px;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    .logo svg {
+        width: 30px;
+        height: 30px;
+    }
+
+    /* 導覽列 */
+    .nav-links {
+        gap: 16px;
+        height: 76px;
+        flex-shrink: 0;
+    }
+    .nav-links a {
+        font-size: 16px;
+        white-space: nowrap;
+    }
+
+    /* 搜尋與會員選單 */
+    .nav-actions {
+        gap: 14px;
+        flex-shrink: 0;
+    }
+    .icon-button {
+        padding: 4px;
+    }
+    .icon-button svg {
+        width: 20px;
+        height: 20px;
+    }
+    /* 平板版未讀訊息數字位置 */
+    .message-unread-badge {
+        top: -3px;
+        right: -3px;
+    }
+    .member-trigger {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+}
+
+/* RWD 手機 */
+@media (max-width: 800px) {
+    .navbar {
+        padding: 15px;
+        min-height: auto;
+
+        display: flex;
+        flex-direction: column;
+        flex-wrap: nowrap;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+    }
+    .logo {
+        font-size: 25px;
+        order: 1;
+    }
+    .logo svg {
+        width: 30px;
+        height: 30px;
+    }
+    .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: center;
+        gap: 16px;
+        height: auto;
+        flex-wrap: wrap;
+    }
+    .nav-links a {
+        font-size: 13px;
+        padding: 8px 0;
+        white-space: nowrap;
+    }
+    .nav-actions {
+        gap: 8px;
+        order: 2;
+        margin-left: 0;
+        justify-content: center;
+    }
+
+    /* 手機版隱藏一般 Icon，保留私訊入口 */
+    .icon-button {
+        display: none;
+    }
+    .header-message-link {
+        display: flex;
+    }
+
+    .btn-login,
+    .btn-register {
+        padding: 7px 13px;
+        font-size: 13px;
+    }
+}

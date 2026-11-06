@@ -1,0 +1,545 @@
+/* 我的訊息頁面 */
+.messages-page {
+    height: calc(100dvh - 80px);
+    min-height: 0;
+    padding: 24px 24px 20px;
+    background: transparent;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+.messages-container {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1100px;
+    min-height: 0;
+    margin: 0 auto;
+}
+
+/* 頁面標題 */
+.messages-heading {
+    flex-shrink: 0;
+    margin-bottom: 20px;
+}
+.messages-heading h1 {
+    margin: 0 0 10px;
+    color: var(--text-dark);
+    font-size: 30px;
+    font-weight: 700;
+}
+.messages-heading p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 15px;
+}
+
+/* 聊天主要版型 */
+.messages-layout {
+    display: grid;
+    grid-template-columns: 340px minmax(0, 1fr);
+    flex: 1;
+    height: auto;
+    min-height: 0;
+    overflow: hidden;
+    background-color: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    box-shadow: 0 4px 18px rgba(80, 50, 30, 0.06);
+}
+
+/* 左側對話列表 */
+.conversations-panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border-right: 1px solid var(--border);
+}
+.conversations-header {
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border);
+}
+.conversations-header h2 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 18px;
+}
+.conversations-list {
+    flex: 1;
+    overflow-y: auto;
+    text-align: center;
+    color: var(--text-gray);
+}
+.messages-placeholder {
+    padding: 24px;
+    color: var(--text-gray);
+    font-size: 14px;
+    text-align: center;
+}
+
+/* 左側對話卡片 */
+.conversation-item {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+
+    width: 100%;
+    padding: 20px 24px;
+
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+/* 滑鼠移入 */
+.conversation-item:hover {
+    background-color: #fff3e9;
+}
+/* 選取中的對話，後續由 JavaScript 控制 */
+.conversation-item.active {
+    background-color: #fff0e5;
+    border-left: 3px solid var(--primary);
+}
+/* 聊天對象名稱 */
+.conversation-name {
+    max-width: 100%;
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 700;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* 最後一則訊息預覽 */
+.conversation-preview {
+    width: 100%;
+    margin: 0;
+
+    color: var(--text-gray);
+    font-size: 14px;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* 最後訊息與傳送時間排列 */
+.conversation-message-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+}
+/* 訊息傳送時間 */
+.conversation-time {
+    flex-shrink: 0;
+    color: var(--text-gray);
+    font-size: 12px;
+    white-space: nowrap;
+}
+/* 最後一則訊息 */
+.conversation-message-row .conversation-preview {
+    flex: 1;
+    min-width: 0;
+}
+/* 對話未讀數量 */
+.conversation-unread-badge {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+
+    border-radius: 999px;
+    background-color: #e53935;
+    color: var(--white);
+
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1;
+}
+/* 有未讀訊息時，名稱保留右側空間 */
+.conversation-item:has(.conversation-unread-badge) .conversation-name {
+    max-width: calc(100% - 35px);
+}
+
+/* 右側聊天區域 */
+.chat-panel {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+}
+.chat-empty-state {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    text-align: center;
+}
+.chat-empty-state > svg {
+    width: 52px;
+    height: 52px;
+    color: var(--primary);
+    margin-bottom: 18px;
+}
+.chat-empty-state h2 {
+    margin: 0 0 10px;
+    color: var(--text-dark);
+    font-size: 21px;
+}
+.chat-empty-state p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 14px;
+}
+
+/* 聊天內容 */
+.chat-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+}
+.chat-content[hidden],
+.chat-empty-state[hidden] {
+    display: none !important;
+}
+.chat-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+    padding: 22px 24px;
+    border-bottom: 1px solid var(--border);
+}
+/* 手機版返回對話列表 */
+.chat-back-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-dark);
+}
+.chat-back-button svg {
+    width: 22px;
+    height: 22px;
+}
+.chat-header h2 {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 18px;
+}
+.chat-messages {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    padding: 24px;
+    background-color: #fffdfb;
+}
+
+/* 訊息輸入區 */
+.chat-form {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 12px;
+    padding: 18px 20px;
+    border-top: 1px solid var(--border);
+}
+.chat-form input {
+    flex: 1;
+    min-width: 0;
+    padding: 12px 16px;
+    border: 1px solid #e6ded7;
+    border-radius: 10px;
+    background-color: var(--white);
+    font: inherit;
+    font-size: 14px;
+    outline: none;
+}
+.chat-form input:focus {
+    border-color: var(--primary);
+}
+.chat-send-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    background-color: var(--primary);
+    color: var(--white);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.chat-send-button:hover {
+    background-color: var(--primary-dark);
+}
+.chat-send-button svg {
+    width: 17px;
+    height: 17px;
+}
+
+/* 聊天訊息氣泡 */
+/* 每一則訊息的外層容器 */
+.chat-message-item {
+    display: flex;
+    width: 100%;
+}
+/* 對方訊息靠左 */
+.chat-message-item.received {
+    justify-content: flex-start;
+}
+/* 自己訊息靠右 */
+.chat-message-item.sent {
+    justify-content: flex-end;
+}
+/* 聊天氣泡共用樣式 */
+.chat-message-bubble {
+    max-width: 75%;
+    padding: 12px 16px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+/* 對方傳送的訊息 */
+.chat-message-item.received .chat-message-bubble {
+    background-color: #f3f3f3;
+    color: var(--text-dark);
+    border-bottom-left-radius: 4px;
+}
+/* 自己傳送的訊息 */
+.chat-message-item.sent .chat-message-bubble {
+    background-color: var(--primary);
+    color: var(--white);
+    border-bottom-right-radius: 4px;
+}
+
+/* 家教預約系統｜聊天室預約卡片 */
+.booking-message-card {
+    width: 320px;
+    max-width: 100%;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background-color: var(--white);
+    box-shadow: 0 3px 12px rgba(80, 50, 30, 0.06);
+    color: var(--text-dark);
+}
+.booking-card-title {
+    margin: 0 0 12px;
+    font-size: 17px;
+    font-weight: 700;
+}
+.booking-card-status {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    background-color: #fff0e5;
+    color: var(--primary-dark);
+    font-size: 12px;
+    font-weight: 600;
+}
+.booking-card-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+.booking-card-detail-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    font-size: 13px;
+}
+.booking-card-detail-row span {
+    color: var(--text-gray);
+}
+.booking-card-detail-row strong {
+    text-align: right;
+    font-weight: 600;
+}
+.booking-card-amount {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 16px;
+    font-size: 14px;
+}
+.booking-card-amount strong {
+    color: var(--primary);
+    font-size: 19px;
+}
+
+/* 家教預約卡片｜老師操作按鈕 */
+.booking-card-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 18px;
+}
+.booking-card-actions button {
+    flex: 1;
+    padding: 11px 8px;
+    border-radius: 9px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.booking-reject-button {
+    border: 1px solid var(--border);
+    background-color: var(--white);
+    color: var(--text-gray);
+}
+.booking-reject-button:hover {
+    background-color: #f7f7f7;
+}
+.booking-accept-button {
+    border: 1px solid var(--primary);
+    background-color: var(--primary);
+    color: var(--white);
+}
+.booking-accept-button:hover {
+    background-color: var(--primary-dark);
+}
+
+/* 家教預約卡片｜標題與狀態 */
+/* 標題靠左、狀態靠右 */
+.booking-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+/* 移除標題原本的下方間距 */
+.booking-card-header .booking-card-title {
+    margin: 0;
+}
+/* 預約狀態共用樣式 */
+.booking-card-header .booking-card-status {
+    flex-shrink: 0;
+    margin-bottom: 0;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+/* 等待回覆 */
+.booking-card-status.pending {
+    background-color: #fff0e5;
+    color: #e9691c;
+}
+/* 已接受 */
+.booking-card-status.accepted {
+    background-color: #e5f5e9;
+    color: #208044;
+}
+/* 已拒絕 */
+.booking-card-status.rejected {
+    background-color: #fce9e9;
+    color: #c83e3e;
+}
+/* 已取消 */
+.booking-card-status.cancelled {
+    background-color: #f0f0f0;
+    color: #666666;
+}
+
+/* RWD 平板 */
+@media (max-width: 800px) {
+    .messages-layout {
+        grid-template-columns: 260px minmax(0, 1fr);
+    }
+}
+
+/* RWD 手機 */
+@media (max-width: 600px) {
+    .messages-page {
+        height: calc(100dvh - 200px);
+        min-height: 0;
+        padding: 12px 14px;
+        overflow: hidden;
+    }
+    .messages-heading {
+        margin-bottom: 12px;
+    }
+    .messages-heading h1 {
+        font-size: 23px;
+        margin-bottom: 6px;
+    }
+    .messages-heading p {
+        font-size: 13px;
+    }
+    .messages-layout {
+        display: block;
+        flex: 1;
+        height: auto;
+        min-height: 0;
+    }
+    /* 預設顯示對話列表 */
+    .conversations-panel {
+        height: 100%;
+        border-right: none;
+        border-bottom: none;
+    }
+    .chat-panel {
+        display: none;
+        height: 100%;
+    }
+    /* 選擇對話後顯示聊天視窗 */
+    .messages-layout.chat-open .conversations-panel {
+        display: none;
+    }
+    .messages-layout.chat-open .chat-panel {
+        display: flex;
+    }
+    /* 手機版返回按鈕 */
+    .chat-back-button {
+        display: flex;
+    }
+    .chat-form {
+        padding: 12px;
+        gap: 8px;
+    }
+    .chat-send-button {
+        padding: 12px;
+    }
+    .booking-message-card {
+        width: 100%;
+        padding: 16px;
+    }
+}

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜老師詳細介紹</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/teacher-detail.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/teacher-detail.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+</head>
+<body>
+    <!-- 引入共用 Header -->
+    {% set active_page = "teachers" %}
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <!-- 老師詳細介紹頁面 -->
+    <main class="teacher-detail-page">
+
+        <!-- 麵包屑導覽 -->
+        <nav class="detail-breadcrumb" aria-label="麵包屑導覽">
+            <a href="/">
+                <i data-lucide="house"></i>
+                首頁
+            </a>
+
+            <i data-lucide="chevron-right"></i>
+
+            <a href="/teachers.html">尋找家教</a>
+
+            <i data-lucide="chevron-right"></i>
+
+            <span>老師詳細資料</span>
+        </nav>
+
+        <!-- 老師基本介紹卡片 -->
+        <section class="detail-card detail-profile">
+
+            <!-- 老師頭貼 -->
+            <div class="detail-profile-avatar" id="detail-avatar">
+                <i data-lucide="user-round"></i>
+            </div>
+
+            <!-- 老師基本資訊 -->
+            <div class="detail-profile-info">
+
+                <h1 id="detail-name">載入中...</h1>
+
+                <div class="detail-profile-meta">
+                    <span id="detail-gender">
+                        <i data-lucide="user-round"></i>
+                    </span>
+
+                    <span id="detail-education">
+                        <i data-lucide="graduation-cap"></i>
+                    </span>
+                </div>
+
+                <div class="detail-profile-meta">
+                    <span id="detail-experience">
+                        <i data-lucide="award"></i>
+                    </span>
+                    
+                    <span id="detail-hourly-rate">
+                        <i data-lucide="coins"></i>
+                    </span>
+                </div>
+
+                <div class="detail-profile-intro">
+                    <i data-lucide="message-square-text"></i>
+                    <div class="detail-intro" id="detail-intro"></div>
+                </div>
+
+                <div class="detail-profile-tags" id="detail-header-tags"></div>
+
+            </div>
+
+            <!-- 老師詳細頁面操作按鈕 -->
+            <div class="detail-profile-actions">
+
+                <!-- 老師本人：編輯資料 -->
+                <a
+                    href="/become-teacher.html?mode=edit"
+                    class="detail-btn-edit"
+                    id="detail-edit-button"
+                    hidden
+                >
+                    <i data-lucide="pencil"></i>
+                    編輯資料
+                </a>
+
+                <!-- 老師本人：刪除老師資料 -->
+                <button
+                    type="button"
+                    class="detail-btn-delete"
+                    id="detail-delete-button"
+                    hidden
+                >
+                    <i data-lucide="trash-2"></i>
+                    刪除資料
+                </button>
+
+                <!-- 其他使用者：聯絡老師 -->
+                <button
+                    type="button"
+                    class="detail-btn-contact"
+                    id="detail-contact-button"
+                >
+                    <i data-lucide="message-circle"></i>
+                    聯絡老師
+                </button>
+
+                <!-- 其他使用者：收藏老師 -->
+                <button
+                    type="button"
+                    class="detail-btn-favorite"
+                    id="detail-favorite-button"
+                    disabled
+                >
+                    <i data-lucide="heart"></i>
+                    收藏老師
+                </button>
+
+            </div>
+
+        </section>
+
+        <!-- 教學資訊 -->
+        <section class="detail-card">
+
+            <h2 class="detail-section-title">
+                <i data-lucide="clipboard-list"></i>
+                教學資訊
+            </h2>
+
+            <!-- 教學介紹：四個資訊欄位 -->
+            <div class="detail-teaching-grid">
+
+                <!-- 教學科目 -->
+                <div class="detail-teaching-item">
+
+                    <h3>
+                        <i data-lucide="book-open"></i>
+                        教學科目
+                    </h3>
+
+                    <div class="detail-profile-tags" id="detail-subjects"></div>
+
+                </div>
+
+                <!-- 教學年級 -->
+                <div class="detail-teaching-item">
+
+                    <h3>
+                        <i data-lucide="chart-no-axes-column-increasing"></i>
+                        教學年級
+                    </h3>
+
+                    <div class="detail-profile-tags" id="detail-grades"></div>
+
+                </div>
+
+                <!-- 教學經驗 -->
+                <div class="detail-teaching-item">
+
+                    <h3>
+                        <i data-lucide="award"></i>
+                        教學經驗
+                    </h3>
+
+                    <p id="detail-teaching-experience"></p>
+
+                </div>
+
+                <!-- 每小時收費 -->
+                <div class="detail-teaching-item">
+
+                    <h3>
+                        <i data-lucide="coins"></i>
+                        每小時收費
+                    </h3>
+
+                    <p class="detail-price" id="detail-teaching-price"></p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- 授課地區 -->
+        <section class="detail-card">
+
+            <h2 class="detail-section-title">
+                <i data-lucide="map-pin"></i>
+                授課地區
+            </h2>
+
+            <div class="detail-location-list" id="detail-locations"></div>
+
+        </section>
+
+        <!-- 可授課時段，星期順序：週日 → 週六 -->
+        <section class="detail-card">
+
+            <h2 class="detail-section-title">
+                <i data-lucide="clock"></i>
+                可授課時段
+            </h2>
+
+            <div class="detail-schedule-scroll">
+
+                <table class="detail-schedule-table">
+
+                    <thead>
+                        <tr>
+                            <th>時段</th>
+                            <th>週日</th>
+                            <th>週一</th>
+                            <th>週二</th>
+                            <th>週三</th>
+                            <th>週四</th>
+                            <th>週五</th>
+                            <th>週六</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="detail-schedule-body"></tbody>
+
+                </table>
+
+            </div>
+
+            <!-- 預約上課按鈕：只有公開老師頁顯示 -->
+            <div class="detail-booking-actions" id="detail-booking-actions" hidden>
+                <button
+                    type="button"
+                    class="detail-booking-button"
+                    id="detail-booking-button"
+                >
+                    <i data-lucide="calendar-days"></i>
+                    預約上課
+                </button>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- 刪除老師資料確認視窗 -->
+    <div
+        class="detail-delete-modal"
+        id="detail-delete-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="detail-delete-title"
+        hidden
+    >
+        <div class="detail-delete-modal-content">
+
+            <div class="detail-delete-modal-icon">
+                <i data-lucide="trash-2"></i>
+            </div>
+
+            <h2 id="detail-delete-title">
+                確定要刪除老師資料嗎？
+            </h2>
+
+            <p>
+                刪除後，您的老師個人介紹、教學地區、
+                可授課時段及頭貼都會被移除，且無法復原。
+            </p>
+
+            <p>
+                會員帳號仍會保留，並恢復為學生身分。
+            </p>
+
+            <p
+                class="detail-delete-error"
+                id="detail-delete-error"
+                role="alert"
+                hidden
+            ></p>
+
+            <div class="detail-delete-modal-actions">
+                <button
+                    type="button"
+                    id="detail-delete-cancel"
+                >
+                    取消
+                </button>
+
+                <button
+                    type="button"
+                    id="detail-delete-confirm"
+                >
+                    確認刪除
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- utorLink｜預約家教課程視窗 -->
+    <div
+        class="booking-modal"
+        id="booking-modal"
+        hidden
+    >
+        <div class="booking-modal-overlay"></div>
+
+        <div
+            class="booking-modal-content"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="booking-modal-title"
+        >
+            <!-- 標題 -->
+            <div class="booking-modal-header">
+                <div>
+                    <h2 id="booking-modal-title">
+                        預約家教課程
+                    </h2>
+                    <p>選擇老師開放的時段後，填寫預約資訊。</p>
+                </div>
+
+                <button
+                    type="button"
+                    id="booking-modal-close"
+                    aria-label="關閉預約視窗"
+                >
+                    <i data-lucide="x"></i>
+                </button>
+            </div>
+
+            <!-- 預約表單 -->
+            <form id="booking-form" novalidate>
+
+                <!-- 授課科目 -->
+                <div class="booking-form-group">
+                    <label for="booking-subject">
+                        授課科目
+                    </label>
+
+                    <select id="booking-subject" required>
+                        <option value="">請選擇授課科目</option>
+                    </select>
+                </div>
+
+                <!-- 上課日期 -->
+                <div class="booking-form-group">
+                    <label>上課日期</label>
+
+                    <!-- 上課日期下拉選單 -->
+                    <div class="booking-date-picker">
+
+                        <button
+                            type="button"
+                            class="booking-date-trigger"
+                            id="booking-date-trigger"
+                            aria-expanded="false"
+                            aria-controls="booking-calendar"
+                        >
+                            <span id="booking-date-display">
+                                請選擇上課日期
+                            </span>
+
+                            <i data-lucide="calendar-days"></i>
+                        </button>
+
+                        <!-- 展開後的月曆 -->
+                        <div
+                            class="booking-calendar"
+                            id="booking-calendar"
+                            hidden
+                        ></div>
+
+                    </div>
+
+                    <input
+                        type="hidden"
+                        id="booking-date"
+                        required
+                    >
+                </div>
+
+                <!-- 課程長度 -->
+                <fieldset class="booking-form-group booking-duration-group">
+                    <legend>課程長度</legend>
+
+                    <div class="booking-duration-options">
+                        <label>
+                            <input
+                                type="radio"
+                                name="booking-duration"
+                                value="60"
+                            >
+                            60 分鐘
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="booking-duration"
+                                value="90"
+                                checked
+                            >
+                            90 分鐘
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="booking-duration"
+                                value="120"
+                            >
+                            120 分鐘
+                        </label>
+                    </div>
+                </fieldset>
+
+                <!-- 開始時間 -->
+                <div class="booking-form-group">
+                    <label for="booking-start-time">
+                        上課時間
+                    </label>
+
+                    <select id="booking-start-time" required>
+                        <option value="">請先選擇上課日期</option>
+                    </select>
+                </div>
+
+                <!-- 預估金額 -->
+                <div class="booking-total">
+                    <span>預估課程金額</span>
+
+                    <strong id="booking-total-amount">
+                        NT$ 0
+                    </strong>
+                </div>
+
+                <!-- 錯誤訊息 -->
+                <p
+                    class="booking-form-error"
+                    id="booking-form-error"
+                    role="alert"
+                    hidden
+                ></p>
+
+                <!-- 操作按鈕 -->
+                <div class="booking-form-actions">
+                    <button
+                        type="button"
+                        id="booking-form-cancel"
+                    >
+                        返回
+                    </button>
+
+                    <button
+                        type="submit"
+                        id="booking-form-submit"
+                    >
+                        送出預約申請
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

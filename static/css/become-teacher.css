@@ -1,0 +1,913 @@
+/* 頁面外框：背景由 common.css 的 body 統一控制 */
+.become-teacher-page {
+    padding: 44px 24px 80px;
+}
+.teacher-page-container {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+/* Hero 頂部標語 */
+.teacher-hero {
+    padding: 42px 28px;
+    margin-bottom: 30px;
+    border: 1px solid #ffe1c9;
+    border-radius: 24px;
+    background: linear-gradient(110deg, #fff0df 0%, #ffead6 100%);
+    text-align: center;
+}
+.teacher-hero > svg {
+    display: block;
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 16px;
+    color: var(--primary);
+}
+.teacher-hero h1 {
+    margin-bottom: 12px;
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 800;
+    line-height: 1.5;
+    letter-spacing: 1px;
+}
+.teacher-hero p {
+    color: var(--text-gray);
+    font-size: 15px;
+    line-height: 1.9;
+}
+
+/* 白色申請表單卡片 */
+.teacher-form-section {
+    padding: 42px 48px;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    background: var(--white);
+    box-shadow: 0 12px 35px rgba(184, 119, 66, 0.08);
+}
+.teacher-form-group {
+    margin-bottom: 36px;
+    padding-bottom: 36px;
+    border-bottom: 1px solid var(--border);
+}
+.teacher-form-group:last-of-type {
+    margin-bottom: 0;
+    padding-bottom: 26px;
+    border-bottom: none;
+}
+.form-section-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 28px;
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+.form-section-title svg {
+    width: 25px;
+    height: 25px;
+    flex-shrink: 0;
+    color: var(--primary);
+}
+
+/* 頭貼上傳區 */
+.teacher-photo-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 35px;
+}
+.teacher-photo-preview {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 112px;
+    height: 112px;
+    overflow: hidden;
+    border: 2px dashed #ffc69f;
+    border-radius: 50%;
+    background: #fff7f0;
+}
+.teacher-photo-preview svg {
+    width: 36px;
+    height: 36px;
+    color: #e9a374;
+}
+.teacher-photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+/* hidden 屬性要維持生效，避免空白圖片遮住相機 */
+.teacher-photo-preview img[hidden],
+.teacher-photo-section input[hidden] {
+    display: none;
+}
+.teacher-photo-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border: 1px solid #f2c5a6;
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+.teacher-photo-button:hover {
+    border-color: var(--primary);
+    background: #fff3e9;
+}
+.teacher-photo-button svg {
+    width: 17px;
+    height: 17px;
+}
+.form-hint {
+    color: var(--text-gray);
+    font-size: 12px;
+    line-height: 1.6;
+    text-align: center;
+}
+/* 上傳照片後，隱藏相機圖示 */
+#teacher-photo-icon[hidden] {
+    display: none;
+}
+
+/* 基本資料 / 教學資訊雙欄 */
+.teacher-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 26px 24px;
+}
+.teacher-field {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+}
+/* 教學科目橫跨整個表單寬度 */
+.teacher-field > label {
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
+}
+.teacher-field .required {
+    margin-left: 3px;
+    color: #e45b49;
+}
+
+/* 每小時收費：固定顯示 NT$ */
+/* 收費欄位外層 */
+.teacher-rate-wrapper {
+    position: relative;
+    width: 100%;
+}
+/* 左側固定的 NT$ */
+.teacher-rate-prefix {
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    color: var(--text-gray);
+    font-size: 14px;
+    pointer-events: none;
+}
+/* 避免輸入數字與 NT$ 重疊 */
+.teacher-rate-wrapper #teacher-hourly-rate {
+    padding-left: 48px;
+}
+
+/* 欄位外觀，限定本頁以免影響登入註冊表單 */
+.teacher-field input:not([type="checkbox"]),
+.teacher-field select,
+.teacher-field textarea {
+    width: 100%;
+    min-width: 0;
+    padding: 13px 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--text-dark);
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.teacher-field input:not([type="checkbox"]),
+.teacher-field select {
+    min-height: 48px;
+}
+.teacher-field input::placeholder,
+.teacher-field textarea::placeholder {
+    color: #aaaaaa;
+}
+.teacher-field input:focus,
+.teacher-field select:focus,
+.teacher-field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 121, 40, 0.12);
+}
+.teacher-field select:disabled {
+    background: #f7f7f7;
+    color: #aaaaaa;
+    cursor: not-allowed;
+}
+
+/* 教學地區：跨縣市、多行政區複選 */
+/* 縣市 / 行政區：桌面並排 */
+.teacher-location-group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+}
+/* 行政區選單與縣市選單維持相同寬度 */
+.teacher-location-group > .teacher-multiselect {
+    min-width: 0;
+}
+/* 尚未選擇縣市時，行政區按鈕不可操作 */
+#teacher-districts .multiselect-trigger:disabled {
+    background-color: #f8f8f8;
+    color: #aaa;
+    cursor: not-allowed;
+}
+/* 行政區選項中的核取方塊 */
+#teacher-districts .multiselect-options label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+}
+/* 滑鼠移入行政區選項 */
+#teacher-districts .multiselect-options label:hover {
+    background-color: #fff3e9;
+}
+/* 行政區核取方塊使用品牌橘色 */
+#teacher-districts input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+/* 已選擇的教學地區：每排平均分布 */
+.teacher-selected-locations {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    width: 100%;
+    margin-top: 12px;
+}
+.teacher-location-tag {
+    justify-content: space-between;
+    min-width: 0;
+}
+/* 沒有已選地區時，不佔用額外空間 */
+.teacher-selected-locations:empty {
+    display: none;
+}
+/* 已選擇的地區標籤 */
+.teacher-location-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border: 1px solid #ffd3b5;
+    border-radius: 8px;
+    background-color: #fff3e9;
+    color: var(--primary-dark);
+    font-size: 13px;
+}
+/* 移除已選地區的按鈕 */
+.teacher-location-remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+}
+/* 移除按鈕的圖示 */
+.teacher-location-remove svg {
+    width: 14px;
+    height: 14px;
+}
+/* 鍵盤操作時顯示焦點 */
+.teacher-location-remove:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* 教學科目 / 年級下拉複選
+   選項由 HTML 決定；展開功能留給 JS */
+.teacher-multiselect {
+    position: relative;
+    width: 100%;
+}
+.multiselect-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    width: 100%;
+    min-height: 48px;
+    padding: 13px 15px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--text-gray);
+    font-size: 14px;
+    font-weight: 400;
+    text-align: left;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.multiselect-trigger:hover {
+    border-color: #f0b88f;
+}
+.multiselect-trigger:focus-visible {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 121, 40, 0.12);
+}
+.multiselect-trigger svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+.multiselect-options {
+    position: absolute;
+    z-index: 20;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 100%;
+    max-height: 240px;
+    overflow-y: auto;
+    padding: 8px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--white);
+    box-shadow: 0 10px 28px rgba(80, 54, 35, 0.12);
+}
+.multiselect-options[hidden] {
+    display: none;
+}
+.multiselect-options label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 11px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+.multiselect-options label:hover {
+    background: #fff3e9;
+}
+.multiselect-options input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+/* 教學年資輸入框 */
+.teacher-experience-input {
+    position: relative;
+    width: 100%;
+}
+.teacher-experience-input input {
+    width: 100%;
+    padding-right: 75px;
+}
+/* 年資單位 */
+.teacher-experience-unit {
+    position: absolute;
+    top: 50%;
+    left: 58px;
+    transform: translateY(-50%);
+    color: var(--text-gray);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* 每週可授課時段 */
+/* 行程表橫跨教學資訊的兩欄 */
+.teacher-availability-field {
+    grid-column: 1 / -1;
+    min-width: 0;
+    margin-top: 8px;
+}
+/* 標題與清除按鈕 */
+.teacher-availability-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+/* 行程表標題與提示文字並排 */
+.teacher-availability-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 12px;
+}
+.teacher-availability-title .form-hint {
+    margin: 0;
+    text-align: left;
+}
+/* 避免清除按鈕被擠壓 */
+.teacher-availability-clear {
+    flex-shrink: 0;
+}
+.teacher-availability-header label {
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
+}
+.teacher-availability-clear {
+    padding: 6px 12px;
+    border: 1px solid #ffd3b5;
+    border-radius: 8px;
+    background: #fff7f0;
+    color: var(--primary);
+    font-size: 13px;
+    cursor: pointer;
+}
+.teacher-availability-clear:hover {
+    background: #fff0e5;
+    border-color: var(--primary);
+}
+/* 提示文字靠左 */
+.teacher-availability-field .form-hint {
+    text-align: left;
+}
+/* 行程表：左側時段 + 週日到週六 */
+.teacher-availability-grid {
+    display: grid;
+    grid-template-columns: 64px repeat(7, minmax(0, 1fr));
+    gap: 8px;
+    width: 100%;
+}
+/* 星期與時段標題 */
+.availability-corner,
+.availability-day,
+.availability-period {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+.availability-corner,
+.availability-day {
+    min-height: 36px;
+}
+.availability-period {
+    min-height: 52px;
+}
+/* 每個可選擇的時段 */
+.availability-slot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    min-height: 52px;
+    border: 1px solid #e8e2dc;
+    border-radius: 10px;
+    background: #faf9f7;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+.availability-slot:hover {
+    border-color: #ffb27d;
+    background: #fff7f0;
+}
+/* checkbox 填滿整個格子，方便點選 */
+.availability-slot input[type="checkbox"] {
+    appearance: none;
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 100%;
+    min-height: 52px;
+    margin: 0;
+    border: none;
+    border-radius: inherit;
+    background: transparent;
+    cursor: pointer;
+}
+/* 選取後變成橘色 */
+.availability-slot:has(input:checked) {
+    border-color: var(--primary);
+    background: #fff0e5;
+}
+/* 選取後顯示打勾符號 */
+.availability-slot input:checked::after {
+    content: "✓";
+    color: var(--primary);
+    font-size: 20px;
+    font-weight: 700;
+}
+/* 鍵盤操作時顯示焦點 */
+.availability-slot:focus-within {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+/* 已選擇時段數量 */
+.teacher-availability-count {
+    margin-top: 4px;
+    color: var(--text-gray);
+    font-size: 13px;
+    text-align: right;
+}
+
+/* 表單驗證錯誤提示 */
+/* 欄位下方的錯誤文字 */
+.teacher-error-message {
+    margin: 2px 0 0;
+    color: #dc3545;
+    font-size: 13px;
+    line-height: 1.5;
+}
+/* 一般輸入欄位錯誤時的邊框 */
+.teacher-field-error input:not([type="checkbox"]),
+.teacher-field-error select,
+.teacher-field-error textarea,
+.teacher-field-error .multiselect-trigger {
+    border-color: #dc3545;
+}
+/* 教學地區複選按鈕錯誤時的邊框 */
+.teacher-field-error #teacher-districts .multiselect-trigger {
+    border-color: #dc3545;
+}
+/* 時段表錯誤時的提示 */
+.teacher-availability-field.teacher-field-error
+.teacher-availability-grid {
+    outline: 1px solid #dc3545;
+    outline-offset: 5px;
+    border-radius: 8px;
+}
+
+/* 自我介紹 / 送出按鈕 */
+.teacher-field textarea {
+    min-height: 180px;
+    resize: vertical;
+    line-height: 1.8;
+}
+.teacher-form-actions {
+    display: flex;
+    justify-content: center;
+    padding-top: 10px;
+}
+.teacher-submit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-width: 240px;
+    min-height: 50px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 12px;
+    background: var(--primary);
+    color: var(--white);
+    font-size: 16px;
+    font-weight: 700;
+    transition: background 0.2s, transform 0.2s;
+}
+.teacher-submit-button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+}
+.teacher-submit-button:active {
+    transform: translateY(0);
+}
+.teacher-submit-button:focus-visible {
+    outline: 3px solid rgba(255, 121, 40, 0.4);
+    outline-offset: 3px;
+}
+.teacher-submit-button svg {
+    width: 19px;
+    height: 19px;
+}
+
+/* 老師資料儲存成功通知 */
+.teacher-success-modal[hidden] {
+    display: none;
+}
+.teacher-success-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+    background: rgba(36, 27, 21, 0.45);
+}
+.teacher-success-card {
+    width: 100%;
+    max-width: 380px;
+
+    padding: 38px 30px;
+    border-radius: 22px;
+
+    background: #ffffff;
+    box-shadow: 0 20px 60px rgba(60, 35, 20, 0.16);
+
+    text-align: center;
+
+    animation: teacherSuccessAppear 0.3s ease-out;
+}
+.teacher-success-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 68px;
+    height: 68px;
+
+    margin: 0 auto 22px;
+    border-radius: 50%;
+
+    background: #fff0e3;
+    color: #ff7928;
+}
+.teacher-success-icon svg {
+    width: 38px;
+    height: 38px;
+}
+.teacher-success-card h2 {
+    margin-bottom: 12px;
+
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+.teacher-success-card p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-gray);
+}
+.teacher-success-loading {
+    margin-top: 24px;
+    font-size: 13px;
+    color: #b45d27;
+}
+
+@keyframes teacherSuccessAppear {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 尚未登入：鎖定背景捲動 */
+html:has(body.teacher-login-required) {
+    overflow: hidden;
+}
+body.teacher-login-required {
+    background: #fff8f1;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+}
+
+/* 未登入時：白色背景，保留頂部導覽列 */
+.teacher-login-notice {
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    background: #fff8f1;
+
+    overflow-y: auto;
+}
+
+/* TutorLink 登入提示卡片 */
+.teacher-login-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 48px 36px;
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #ffe1cc;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(255, 121, 40, 0.08);
+}
+.teacher-login-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #fff0e5;
+    color: #ff7928;
+}
+.teacher-login-icon svg {
+    width: 34px;
+    height: 34px;
+}
+.teacher-login-card h2 {
+    margin: 0 0 14px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #292929;
+}
+.teacher-login-card p {
+    margin: 0 auto 28px;
+    max-width: 320px;
+    color: #777777;
+    font-size: 15px;
+    line-height: 1.9;
+}
+#teacher-login-button {
+    width: 100%;
+    max-width: 240px;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 12px;
+    background: #ff7928;
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#teacher-login-button:hover {
+    background: #ed6819;
+}
+
+/* 登入視窗顯示在白色通知上方 */
+#auth-modal {
+    z-index: 1000;
+}
+
+/* 未登入時保留頂部導覽列 */
+body.teacher-login-required header {
+    position: relative;
+    z-index: 950;
+}
+
+/* RWD：平板（沿用 common.css 斷點）*/
+@media (max-width: 1100px) {
+    .become-teacher-page {
+        padding: 35px 24px 65px;
+    }
+    .teacher-form-section {
+        padding: 36px;
+    }
+}
+
+/* RWD：手機（沿用 common.css 斷點） */
+@media (max-width: 600px) {
+    .become-teacher-page {
+        padding: 22px 15px 45px;
+    }
+    .teacher-hero {
+        padding: 32px 18px;
+        margin-bottom: 20px;
+        border-radius: 18px;
+    }
+    .teacher-hero > svg {
+        width: 36px;
+        height: 36px;
+    }
+    .teacher-hero h1 {
+        font-size: 23px;
+        letter-spacing: 0;
+    }
+    .teacher-hero p {
+        font-size: 13px;
+    }
+    .teacher-form-section {
+        padding: 28px 20px;
+        border-radius: 18px;
+    }
+    .teacher-form-group {
+        margin-bottom: 28px;
+        padding-bottom: 28px;
+    }
+    .form-section-title {
+        margin-bottom: 24px;
+        font-size: 19px;
+    }
+    .teacher-photo-preview {
+        width: 96px;
+        height: 96px;
+    }
+    /* 手機版基本資料 / 教學資訊改為單欄 */
+    .teacher-form-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+    /* 縣市與行政區上下排列，避免手機欄位過窄 */
+    .teacher-location-group {
+        grid-template-columns: 1fr;
+    }
+    .teacher-field > label {
+        font-size: 14px;
+    }
+    .teacher-field textarea {
+        min-height: 160px;
+    }
+    .teacher-selected-locations {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .teacher-submit-button {
+        width: 100%;
+        min-width: 0;
+    }
+    /* 手機版行程表 */
+    .teacher-availability-grid {
+        grid-template-columns: 40px repeat(7, minmax(0, 1fr));
+        gap: 4px;
+    }
+    .availability-corner,
+    .availability-day,
+    .availability-period {
+        font-size: 11px;
+    }
+    .availability-slot,
+    .availability-slot input[type="checkbox"] {
+        min-height: 40px;
+    }
+    .availability-slot {
+        border-radius: 6px;
+    }
+    .availability-slot input:checked::after {
+        font-size: 16px;
+    }
+    .teacher-success-card {
+        padding: 32px 22px;
+    }
+    .teacher-success-card h2 {
+        font-size: 20px;
+    }
+    .teacher-login-card {
+        padding: 36px 24px;
+    }
+    .teacher-login-card h2 {
+        font-size: 23px;
+    }
+}
+
+/* 尊重系統「減少動態效果」設定 */
+@media (prefers-reduced-motion: reduce) {
+    .become-teacher-page *,
+    .become-teacher-page *::before,
+    .become-teacher-page *::after {
+        transition: none;
+        animation: none;
+    }
+}
+
+/* 原生下拉選單：統一箭頭位置 */
+.teacher-field select {
+    appearance: none;
+
+    padding-right: 42px;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23777777' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 18px center;
+    background-size: 16px;
+}
+/* 教學科目、教學年級 */
+.multiselect-trigger {
+    padding-right: 22px;
+}

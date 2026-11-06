@@ -1,0 +1,728 @@
+/* Calendar 個人行事曆 */
+
+/* 頁面主容器 */
+.calendar-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+}
+/* 頁面標題 */
+.calendar-header {
+    margin-bottom: 28px;
+}
+.calendar-header h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+.calendar-header p {
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--text-gray);
+}
+
+/* 當月預約統計 */
+.calendar-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+}
+/* 統計卡片 */
+.calendar-stat-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 20px 24px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+/* 滑鼠移入統計卡片 */
+.calendar-stat-card:hover {
+    background: #fff8f2;
+    border-color: var(--primary);
+}
+/* 選取中的統計卡片 */
+.calendar-stat-card.active {
+    background: #fff3e8;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 1px var(--primary);
+}
+/* 鍵盤操作時的焦點樣式 */
+.calendar-stat-card:focus {
+    outline: none;
+}
+.calendar-stat-card:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* 狀態名稱 */
+.calendar-stat-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+/* 統計數字 */
+.calendar-stat-card strong {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+/* 狀態圓點 */
+.calendar-status-dot {
+    display: inline-block;
+    flex-shrink: 0;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+}
+
+/* 已確認：沿用既有成功通知綠色 */
+.calendar-status-dot.confirmed {
+    background: #23835a;
+}
+/* 待確認：沿用全站深橘色 */
+.calendar-status-dot.pending {
+    background: var(--primary-dark);
+}
+/* 已取消／已拒絕：沿用全站次要文字灰色 */
+.calendar-status-dot.cancelled {
+    background: var(--text-gray);
+}
+
+/* Calendar Content 月曆與當日課程清單 */
+.calendar-content {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 24px;
+}
+/* 左側月曆、右側課程清單共用卡片樣式 */
+.calendar-month-panel,
+.calendar-day-panel {
+    min-width: 0;
+    padding: 28px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+/* Month Header 月份切換 */
+.calendar-month-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    margin-bottom: 28px;
+}
+.calendar-month-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+}
+/* 上個月、下個月按鈕 */
+.calendar-month-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: var(--text-dark);
+    transition: background 0.2s, color 0.2s;
+}
+.calendar-month-nav:hover {
+    background: var(--background);
+    color: var(--primary);
+}
+.calendar-month-nav svg {
+    width: 20px;
+    height: 20px;
+}
+/* Weekdays 星期標題 */
+.calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+
+    margin-bottom: 8px;
+}
+.calendar-weekdays span {
+    padding: 10px 0;
+    text-align: center;
+
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-gray);
+}
+
+/* Days 月曆日期 */
+.calendar-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    grid-auto-rows: 58px;
+    gap: 4px;
+}
+/* 月曆日期按鈕 */
+.calendar-day {
+    position: relative;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 100%;
+    padding: 0;
+
+    background: transparent;
+    border: none;
+    border-radius: 10px;
+
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition: background 0.2s, color 0.2s;
+}
+.calendar-day:hover {
+    background: var(--background);
+}
+
+/* 選取中的日期 */
+.calendar-day.selected {
+    background: var(--primary);
+    color: var(--white);
+}
+/* 沒有日期的空白格 */
+.calendar-day-empty {
+    width: 100%;
+    height: 100%;
+}
+/* 選取日期時，圓點保持可辨識 */
+.calendar-day.selected .calendar-status-dot {
+    outline: 1px solid var(--white);
+}
+
+/* Legend 預約狀態說明 */
+.calendar-legend {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 18px;
+
+    margin-top: 24px;
+}
+.calendar-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    font-size: 13px;
+    color: var(--text-gray);
+}
+
+/* Day Panel 當日課程清單 */
+.calendar-day-header {
+    margin-bottom: 24px;
+}
+.calendar-day-header h2 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+.calendar-day-header p {
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-gray);
+}
+
+/* 課程清單容器 */
+.calendar-booking-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+/* 尚未選擇日期、沒有預約時的提示 */
+.calendar-empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+
+    min-height: 300px;
+    padding: 24px;
+
+    text-align: center;
+    color: var(--text-gray);
+}
+.calendar-empty svg {
+    width: 42px;
+    height: 42px;
+    color: var(--primary);
+}
+.calendar-empty p {
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+/* 今天的日期 */
+.calendar-day.today {
+    border: 1px solid var(--primary);
+    font-weight: 700;
+}
+/* 今天同時被選取 */
+.calendar-day.today.selected {
+    border-color: var(--primary);
+    background: var(--primary);
+    color: var(--white);
+}
+
+/* 月曆日期內的預約狀態圓點 */
+.calendar-day-dots {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    height: 7px;
+    margin: 0;
+
+    pointer-events: none;
+}
+.calendar-day-dots .calendar-status-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+}
+
+/* 個人行事曆｜預約課程卡片 */
+/* 預約卡片 */
+.calendar-booking-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 3px 12px rgba(80, 50, 30, 0.06);
+
+    cursor: pointer;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.calendar-booking-card:hover,
+.calendar-booking-card:focus-visible {
+    border-color: var(--primary);
+    box-shadow: 0 5px 16px rgba(255, 121, 40, 0.12);
+}
+/* 課程標題與預約狀態 */
+.calendar-booking-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.calendar-booking-header strong {
+    color: var(--text-dark);
+    font-size: 17px;
+    font-weight: 700;
+}
+/* 課程時間與金額 */
+.calendar-booking-info {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+.calendar-booking-info > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-gray);
+    font-size: 14px;
+}
+/* 課程資訊圖示 */
+.calendar-booking-info svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+}
+
+/* 預約卡片｜展開詳細資訊 */
+/* 收合時隱藏詳細資訊 */
+.calendar-booking-details[hidden] {
+    display: none;
+}
+/* 展開區域 */
+.calendar-booking-details {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+/* 展開時維持橘色外框 */
+.calendar-booking-card[aria-expanded="true"] {
+    border-color: var(--primary);
+    box-shadow: 0 5px 16px rgba(255, 121, 40, 0.12);
+}
+/* 詳細資訊標題 */
+.calendar-booking-detail-title {
+    margin-bottom: 18px;
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 700;
+}
+/* 詳細資訊每一列 */
+.calendar-booking-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+.calendar-booking-detail-row span {
+    color: var(--text-gray);
+}
+.calendar-booking-detail-row strong {
+    color: var(--text-dark);
+    font-weight: 600;
+    text-align: right;
+}
+
+/* 預約狀態提示 */
+.calendar-booking-detail-notice {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+    padding: 14px;
+    border-radius: 10px;
+    background: var(--background);
+    color: var(--text-gray);
+    font-size: 13px;
+    line-height: 1.6;
+}
+.calendar-booking-detail-notice svg {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+/* 預約管理按鈕區域 */
+.calendar-booking-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+/* 預約管理按鈕共用設定 */
+.calendar-booking-actions button {
+    flex: 1;
+    padding: 12px 16px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+/* 接受預約 */
+.calendar-booking-accept-button {
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: var(--white);
+}
+.calendar-booking-accept-button:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+/* 拒絕預約 */
+.calendar-booking-reject-button {
+    border: 1px solid var(--border);
+    background: var(--white);
+    color: var(--text-dark);
+}
+.calendar-booking-reject-button:hover {
+    background: var(--background);
+}
+/* 前往聊天室按鈕 */
+.calendar-booking-chat-button {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px 16px;
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    background: var(--primary);
+    color: var(--white);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.calendar-booking-chat-button:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+
+/* 預約狀態共用外觀 */
+.calendar-booking-status {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+/* 已確認 */
+.calendar-booking-status.accepted {
+    background-color: #e5f5e9;
+    color: #208044;
+}
+/* 待確認 */
+.calendar-booking-status.pending {
+    background-color: #fff0e5;
+    color: #e9691c;
+}
+/* 已拒絕 */
+.calendar-booking-status.rejected {
+    background-color: #fce9e9;
+    color: #c83e3e;
+}
+/* 已取消 */
+.calendar-booking-status.cancelled {
+    background-color: #f0f0f0;
+    color: #666666;
+}
+
+/* 個人行事曆｜會員登入限制 */
+/* 尚未確認登入身分，或未登入時隱藏行事曆 */
+body.calendar-auth-checking .calendar-page,
+body.calendar-login-required .calendar-page {
+    display: none;
+}
+/* 未登入時鎖定背景捲動 */
+html:has(body.calendar-login-required) {
+    overflow: hidden;
+}
+body.calendar-login-required {
+    background: #fff8f1;
+    overflow: hidden;
+    height: 100vh;
+    height: 100dvh;
+}
+/* 未登入提示畫面 */
+.calendar-login-notice {
+    position: fixed;
+    top: 100px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    background: #fff8f1;
+    overflow-y: auto;
+}
+/* 登入提示卡片 */
+.calendar-login-card {
+    width: 100%;
+    max-width: 440px;
+    padding: 48px 36px;
+
+    text-align: center;
+    background: #ffffff;
+    border: 1px solid #ffe1cc;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(255, 121, 40, 0.08);
+}
+/* 鎖頭圖示 */
+.calendar-login-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #fff0e5;
+    color: #ff7928;
+}
+.calendar-login-icon svg {
+    width: 34px;
+    height: 34px;
+}
+/* 標題 */
+.calendar-login-card h2 {
+    margin: 0 0 14px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #292929;
+}
+/* 說明文字 */
+.calendar-login-card p {
+    margin: 0 auto 28px;
+    max-width: 320px;
+
+    color: #777777;
+    font-size: 15px;
+    line-height: 1.9;
+}
+/* 立即登入按鈕 */
+#calendar-login-button {
+    width: 100%;
+    max-width: 240px;
+    padding: 14px 24px;
+
+    border: none;
+    border-radius: 12px;
+    background: #ff7928;
+    color: #ffffff;
+
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+#calendar-login-button:hover {
+    background: #ed6819;
+}
+/* 確保共用登入視窗在提示卡片上方 */
+#auth-modal {
+    z-index: 1000;
+}
+
+/* RWD 平板 */
+@media (max-width: 1100px) {
+    .calendar-page {
+        padding: 36px 20px 64px;
+    }
+    .calendar-stat-card {
+        padding: 16px;
+    }
+    .calendar-content {
+        gap: 16px;
+    }
+    .calendar-month-panel,
+    .calendar-day-panel {
+        padding: 18px;
+    }
+    .calendar-days {
+        grid-auto-rows: 48px;
+    }
+}
+
+/* RWD 手機 */
+@media (max-width: 600px) {
+    .calendar-page {
+        padding: 28px 16px 48px;
+    }
+    .calendar-header h1 {
+        font-size: 24px;
+    }
+    .calendar-stats {
+        gap: 8px;
+    }
+    .calendar-stat-card {
+        padding: 12px 8px;
+        gap: 6px;
+    }
+    .calendar-stat-label {
+        gap: 5px;
+        font-size: 12px;
+    }
+    .calendar-status-dot {
+        width: 7px;
+        height: 7px;
+    }
+    .calendar-stat-card strong {
+        font-size: 18px;
+    }
+    .calendar-stat-card:last-child .calendar-stat-label > span:last-child {
+        max-width: 65px;
+        line-height: 1.4;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    /* 月曆在上、課程清單在下 */
+    .calendar-content {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 20px;
+    }
+    .calendar-month-panel,
+    .calendar-day-panel {
+        padding: 18px;
+    }
+    .calendar-month-header {
+        margin-bottom: 18px;
+    }
+    .calendar-month-header h2,
+    .calendar-day-header h2 {
+        font-size: 18px;
+    }
+    .calendar-days {
+        grid-auto-rows: 48px;
+    }
+    .calendar-weekdays span {
+        font-size: 13px;
+    }
+    .calendar-legend {
+        gap: 12px;
+        margin-top: 18px;
+    }
+    .calendar-empty {
+        min-height: 180px;
+    }
+    .calendar-booking-header strong,
+    .calendar-modal-course h3 {
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+    .calendar-login-notice {
+        top: 80px;
+        padding: 16px;
+    }
+    .calendar-login-card {
+        padding: 40px 24px;
+    }
+    .calendar-login-card h2 {
+        font-size: 23px;
+    }
+}

@@ -1,0 +1,290 @@
+<!-- Auth Modal 會員登入／註冊視窗 -->
+<!-- 預設隱藏，之後由 auth.js 控制開啟與關閉 -->
+<div
+    class="auth-modal"
+    id="auth-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="auth-title"
+    hidden
+>
+    <!-- 半透明背景遮罩 -->
+    <div class="auth-overlay" data-auth-close></div>
+
+    <!-- 登入／註冊視窗主體 -->
+    <div class="auth-container">
+
+        <!-- 關閉按鈕 -->
+        <button
+            type="button"
+            class="auth-close"
+            data-auth-close
+            aria-label="關閉會員視窗"
+        >
+            <i data-lucide="x"></i>
+        </button>
+
+        <!-- Logo 與標題 -->
+        <div class="auth-header">
+
+            <div class="auth-logo">
+                <i data-lucide="graduation-cap"></i>
+                <span>Tutor<strong>Link</strong></span>
+            </div>
+
+            <h2 id="auth-title">歡迎回到 TutorLink</h2>
+
+            <p id="auth-description">
+                登入帳號，開始尋找適合的家教老師
+            </p>
+
+        </div>
+
+        <!-- 登入／註冊切換 -->
+        <div class="auth-tabs" role="tablist" aria-label="會員功能">
+
+            <button
+                type="button"
+                class="auth-tab active"
+                id="auth-login-tab"
+                role="tab"
+                aria-selected="true"
+                aria-controls="auth-login-panel"
+                data-auth-tab="login"
+            >
+                登入
+            </button>
+
+            <button
+                type="button"
+                class="auth-tab"
+                id="auth-register-tab"
+                role="tab"
+                aria-selected="false"
+                aria-controls="auth-register-panel"
+                data-auth-tab="register"
+            >
+                註冊
+            </button>
+        
+        </div>
+
+        <!-- 登入表單 -->
+        <div
+            id="auth-login-panel"
+            role="tabpanel"
+            aria-labelledby="auth-login-tab"
+        >
+            <form id="auth-login-form" class="auth-form">
+
+                <!-- Email -->
+                <div class="auth-field">
+                    <label for="login-email">電子郵件</label>
+
+                    <div class="auth-input-wrapper">
+                        <i data-lucide="mail"></i>
+
+                        <input
+                            type="email"
+                            id="login-email"
+                            name="email"
+                            placeholder="example@email.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- 密碼 -->
+                <div class="auth-field">
+                    <label for="login-password">密碼</label>
+
+                    <div class="auth-input-wrapper">
+                        <i data-lucide="lock-keyhole"></i>
+
+                        <input
+                            type="password"
+                            id="login-password"
+                            name="password"
+                            placeholder="請輸入密碼"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- 登入錯誤或成功訊息 -->
+                <p
+                    class="auth-message"
+                    id="login-message"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+                <!-- 登入按鈕 -->
+                <button type="submit" class="auth-submit">
+                    登入
+                    <i data-lucide="arrow-right"></i>
+                </button>
+
+            </form>
+        </div>
+
+        <!-- 註冊表單 -->
+        <div
+            id="auth-register-panel"
+            role="tabpanel"
+            aria-labelledby="auth-register-tab"
+            hidden
+        >
+            <form id="auth-register-form" class="auth-form">
+
+                <!-- 姓名 -->
+                <div class="auth-field">
+                    <label for="register-name">姓名</label>
+
+                    <div class="auth-input-wrapper">
+                        <i data-lucide="user-round"></i>
+
+                        <input
+                            type="text"
+                            id="register-name"
+                            name="name"
+                            placeholder="請輸入姓名"
+                            autocomplete="name"
+                            minlength="1"
+                            maxlength="50"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="auth-field">
+                    <label for="register-email">電子郵件</label>
+
+                    <div class="auth-input-wrapper">
+                        <i data-lucide="mail"></i>
+
+                        <input
+                            type="email"
+                            id="register-email"
+                            name="email"
+                            placeholder="example@email.com"
+                            autocomplete="email"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- 密碼 -->
+                <div class="auth-field">
+                    <label for="register-password">密碼</label>
+
+                    <div class="auth-input-wrapper">
+                        <i data-lucide="lock-keyhole"></i>
+
+                        <input
+                            type="password"
+                            id="register-password"
+                            name="password"
+                            placeholder="請設定密碼（至少 8 個字元）"
+                            autocomplete="new-password"
+                            minlength="8"
+                            maxlength="128"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- 確認密碼 -->
+                <div class="auth-field">
+                    <label for="register-confirm-password">
+                        確認密碼
+                    </label>
+
+                    <div class="auth-input-wrapper">
+                        <i data-lucide="shield-check"></i>
+
+                        <input
+                            type="password"
+                            id="register-confirm-password"
+                            name="confirm-password"
+                            placeholder="請再次輸入密碼"
+                            autocomplete="new-password"
+                            minlength="8"
+                            maxlength="128"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <!-- 註冊錯誤或成功訊息 -->
+                <p
+                    class="auth-message"
+                    id="register-message"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+                <!-- 註冊按鈕 -->
+                <button type="submit" class="auth-submit">
+                    建立帳號
+                    <i data-lucide="arrow-right"></i>
+                </button>
+
+            </form>
+        </div>
+
+        <!-- 視窗底部文字 -->
+        <p class="auth-footer">
+            加入 TutorLink，讓學習與教學更簡單。
+        </p>
+
+    </div>
+</div>
+
+<!-- Delete Account Modal 刪除會員帳號確認視窗 -->
+<div
+    class="delete-account-modal"
+    id="delete-account-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="delete-account-title"
+    aria-describedby="delete-account-description"
+    hidden
+>
+    <div class="delete-account-overlay"></div>
+
+    <div class="delete-account-container">
+        <div class="delete-account-icon">
+            <i data-lucide="triangle-alert"></i>
+        </div>
+
+        <h2 id="delete-account-title">確定要刪除帳號嗎？</h2>
+
+        <p id="delete-account-description">
+            刪除後將無法復原，所有會員資料都會永久移除。
+            如果你已建立家教老師資料，老師介紹、
+            授課地區、授課時段及頭貼也會一併刪除。
+        </p>
+
+        <div class="delete-account-actions">
+            <button
+                type="button"
+                id="delete-account-cancel"
+                class="delete-account-cancel"
+            >
+                取消
+            </button>
+
+            <button
+                type="button"
+                id="delete-account-confirm"
+                class="delete-account-confirm"
+            >
+                確認刪除帳號
+            </button>
+        </div>
+    </div>
+</div>

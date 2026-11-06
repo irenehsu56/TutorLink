@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜成為家教老師</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/become-teacher.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/become-teacher.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+</head>
+<body>
+    <!-- 引入共用 Header -->
+    {% set active_page = "become-teacher" %}
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <main class="become-teacher-page">
+
+        <!-- 頁面主要內容 -->
+        <div class="teacher-page-container">
+
+            <!-- 頂部標語區 -->
+            <section class="teacher-hero">
+                <i data-lucide="graduation-cap"></i>
+
+                <h1>分享你的專業，成為家教老師</h1>
+
+                <p>加入 TutorLink，讓更多學生看見你的專長。</p>
+                <p>建立個人教學檔案，開啟你的家教之旅！</p>
+            </section>
+
+            <!-- 成為老師申請表單 -->
+            <section class="teacher-form-section">
+                <form id="teacher-application-form" novalidate>
+
+                    <!-- 第一區：基本資料 -->
+                    <div class="teacher-form-group">
+                        <h2 class="form-section-title">
+                            <i data-lucide="user-round"></i>
+                            基本資料
+                        </h2>
+
+                        <!-- 老師頭貼 -->
+                        <div class="teacher-photo-section">
+
+                            <div class="teacher-photo-preview">
+                                <i data-lucide="camera"
+                                id="teacher-photo-icon"></i>
+
+                                <img
+                                    id="teacher-photo-image"
+                                    alt="老師頭貼預覽"
+                                    hidden
+                                >
+                            </div>
+
+                            <label
+                                for="teacher-photo"
+                                class="teacher-photo-button"
+                            >
+                                <i data-lucide="upload"></i>
+                                上傳個人照片
+                            </label>
+
+                            <input
+                                type="file"
+                                id="teacher-photo"
+                                name="photo"
+                                accept="image/jpeg,image/png,image/webp"
+                                hidden
+                                required
+                            >
+
+                            <p class="form-hint">
+                                建議使用清晰的正面照片，支援 JPG、PNG、WebP
+                            </p>
+                        </div>
+
+                        <!-- 基本資料雙欄 -->
+                        <div class="teacher-form-grid">
+                            <!-- 姓名 -->
+                            <div class="teacher-field">
+                                <label for="teacher-name">
+                                    姓名 <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="teacher-name"
+                                    name="name"
+                                    placeholder="請輸入姓名"
+                                    maxlength="50"
+                                    required
+                                >
+                            </div>
+
+                            <!-- 性別 -->
+                            <div class="teacher-field">
+                                <label for="teacher-gender">
+                                    性別 <span class="required">*</span>
+                                </label>
+
+                                <select
+                                    id="teacher-gender"
+                                    name="gender"
+                                    required
+                                >
+                                    <option value="">請選擇性別</option>
+                                    <option value="male">男</option>
+                                    <option value="female">女</option>
+                                    <option value="other">其他</option>
+                                    <option value="undisclosed">不願透露</option>
+                                </select>
+                            </div>
+
+                            <!-- 教學地區 -->
+                            <div class="teacher-field">
+                                <label for="teacher-city">
+                                    教學地區 <span class="required">*</span>
+                                </label>
+
+                                <!-- 教學地區：跨縣市、多行政區複選 -->
+                                <div class="teacher-location-group">
+
+                                    <!-- 縣市選單 -->
+                                    <select id="teacher-city" name="city">
+                                        <option value="">請選擇縣市</option>
+                                        <option value="taipei">臺北市</option>
+                                        <option value="new-taipei">新北市</option>
+                                        <option value="keelung">基隆市</option>
+                                        <option value="taoyuan">桃園市</option>
+                                        <option value="hsinchu-city">新竹市</option>
+                                        <option value="hsinchu-county">新竹縣</option>
+                                        <option value="yilan">宜蘭縣</option>
+                                        <option value="miaoli">苗栗縣</option>
+                                        <option value="taichung">臺中市</option>
+                                        <option value="changhua">彰化縣</option>
+                                        <option value="nantou">南投縣</option>
+                                        <option value="yunlin">雲林縣</option>
+                                        <option value="chiayi-city">嘉義市</option>
+                                        <option value="chiayi-county">嘉義縣</option>
+                                        <option value="tainan">臺南市</option>
+                                        <option value="kaohsiung">高雄市</option>
+                                        <option value="pingtung">屏東縣</option>
+                                        <option value="hualien">花蓮縣</option>
+                                        <option value="taitung">臺東縣</option>
+                                        <option value="penghu">澎湖縣</option>
+                                        <option value="kinmen">金門縣</option>
+                                        <option value="lienchiang">連江縣</option>
+                                    </select>
+
+                                    <!-- 行政區複選選單 -->
+                                    <div class="teacher-multiselect" id="teacher-districts">
+
+                                        <button
+                                            type="button"
+                                            class="multiselect-trigger"
+                                            aria-expanded="false"
+                                            aria-controls="teacher-district-options"
+                                            disabled
+                                        >
+                                            <span>請先選擇縣市</span>
+                                            <i data-lucide="chevron-down"></i>
+                                        </button>
+
+                                        <!-- 行政區選項由 JavaScript 動態產生 -->
+                                        <div
+                                            class="multiselect-options"
+                                            id="teacher-district-options"
+                                            hidden
+                                        ></div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <!-- 最高學歷 -->
+                            <div class="teacher-field">
+                                <label for="teacher-education">
+                                    最高學歷 <span class="required">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="teacher-education"
+                                    name="education"
+                                    placeholder="學校、科系"
+                                    maxlength="100"
+                                    required
+                                >
+                            </div>
+
+                            <!-- 已選擇的教學地區 -->
+                            <div
+                                class="teacher-selected-locations"
+                                id="teacher-selected-locations"
+                                aria-live="polite"
+                            >
+                                <!-- JavaScript 會在這裡顯示已選擇的地區 -->
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 第二區：教學資訊 -->
+                    <div class="teacher-form-group">
+                        <h2 class="form-section-title">
+                            <i data-lucide="clipboard-list"></i>
+                            教學資訊
+                        </h2>
+
+                        <div class="teacher-form-grid">
+
+                            <!-- 教學年級 -->
+                            <div class="teacher-field">
+                                <label id="teacher-grades-label">
+                                    教學年級 <span class="required">*</span>
+                                </label>
+
+                                <!-- JS 階段實作下拉複選 -->
+                                <div
+                                    class="teacher-multiselect"
+                                    id="teacher-grades"
+                                >
+                                    <button
+                                        type="button"
+                                        class="multiselect-trigger"
+                                        aria-labelledby="teacher-grades-label"
+                                        aria-expanded="false"
+                                    >
+                                        <span>請選擇教學年級</span>
+                                        <i data-lucide="chevron-down"></i>
+                                    </button>
+
+                                    <div class="multiselect-options" hidden>
+                                        <label><input type="checkbox" name="grades" value="elementary"> 國小</label>
+                                        <label><input type="checkbox" name="grades" value="junior"> 國中</label>
+                                        <label><input type="checkbox" name="grades" value="senior"> 高中</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- 每小時收費 -->
+                            <div class="teacher-field">
+                                <label for="teacher-hourly-rate">
+                                    每小時收費 <span class="required">*</span>
+                                </label>
+
+                                <div class="teacher-rate-wrapper">
+
+                                    <!-- 固定顯示貨幣單位 -->
+                                    <span class="teacher-rate-prefix">NT$ </span>
+
+                                    <input
+                                        type="number"
+                                        id="teacher-hourly-rate"
+                                        name="hourly_rate"
+                                        placeholder="500"
+                                        min="200"
+                                        step="50"
+                                        required
+                                    >
+
+                                </div>
+                            </div>
+
+                            <!-- 教學科目 -->
+                            <div class="teacher-field">
+                                <label id="teacher-subjects-label">
+                                    教學科目 <span class="required">*</span>
+                                </label>
+
+                                <!-- JS 階段實作下拉複選 -->
+                                <div
+                                    class="teacher-multiselect"
+                                    id="teacher-subjects"
+                                >
+                                    <button
+                                        type="button"
+                                        class="multiselect-trigger"
+                                        aria-labelledby="teacher-subjects-label"
+                                        aria-expanded="false"
+                                    >
+                                        <span>請選擇教學科目</span>
+                                        <i data-lucide="chevron-down"></i>
+                                    </button>
+
+                                    <div class="multiselect-options" hidden>
+                                        <label><input type="checkbox" name="subjects" value="math"> 數學</label>
+                                        <label><input type="checkbox" name="subjects" value="english"> 英文</label>
+                                        <label><input type="checkbox" name="subjects" value="chinese"> 國文</label>
+                                        <label><input type="checkbox" name="subjects" value="science"> 自然</label>
+                                        <label><input type="checkbox" name="subjects" value="social"> 社會</label>
+                                        <label><input type="checkbox" name="subjects" value="art"> 美術</label>
+                                        <label><input type="checkbox" name="subjects" value="music"> 音樂</label>
+                                        <label><input type="checkbox" name="subjects" value="other"> 其他</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 教學經驗 -->
+                            <div class="teacher-field">
+                                <label for="teacher-experience">
+                                    教學經驗 <span class="required">*</span>
+                                </label>
+
+                                <div class="teacher-experience-input">
+                                    <input
+                                        type="number"
+                                        id="teacher-experience"
+                                        name="experience"
+                                        min="0"
+                                        step="0.5"
+                                        placeholder="例如：1.5"
+                                        required
+                                    >
+                                    <span class="teacher-experience-unit">年</span>
+                                </div>
+                            </div>
+
+                            <!-- 每週可授課時段 -->
+                            <div class="teacher-field teacher-availability-field">
+
+                                <div class="teacher-availability-header">
+
+                                    <!-- 標題與提示文字並排 -->
+                                    <div class="teacher-availability-title">
+
+                                        <label id="teacher-availability-label">
+                                            每週可授課時段 <span class="required">*</span>
+                                        </label>
+
+                                        <p class="form-hint">
+                                            請選擇每週可以上課的時段，可複選。
+                                        </p>
+
+                                    </div>
+
+                                    <!-- 清除全部 -->
+                                    <button
+                                        type="button"
+                                        id="teacher-availability-clear"
+                                        class="teacher-availability-clear"
+                                    >
+                                        清除全部
+                                    </button>
+
+                                </div>
+
+                                <!-- 週日～週六 × 早上、下午、晚上 -->
+                                <div
+                                    class="teacher-availability-grid"
+                                    id="teacher-availability"
+                                    role="group"
+                                    aria-labelledby="teacher-availability-label"
+                                >
+
+                                    <!-- 第一列：星期標題 -->
+                                    <div class="availability-corner">時段</div>
+                                    <div class="availability-day">週日</div>
+                                    <div class="availability-day">週一</div>
+                                    <div class="availability-day">週二</div>
+                                    <div class="availability-day">週三</div>
+                                    <div class="availability-day">週四</div>
+                                    <div class="availability-day">週五</div>
+                                    <div class="availability-day">週六</div>
+
+                                    <!-- 早上 -->
+                                    <div class="availability-period">早上</div>
+
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="0-morning" aria-label="週日早上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="1-morning" aria-label="週一早上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="2-morning" aria-label="週二早上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="3-morning" aria-label="週三早上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="4-morning" aria-label="週四早上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="5-morning" aria-label="週五早上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="6-morning" aria-label="週六早上">
+                                    </label>
+
+                                    <!-- 下午 -->
+                                    <div class="availability-period">下午</div>
+
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="0-afternoon" aria-label="週日下午">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="1-afternoon" aria-label="週一下午">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="2-afternoon" aria-label="週二下午">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="3-afternoon" aria-label="週三下午">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="4-afternoon" aria-label="週四下午">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="5-afternoon" aria-label="週五下午">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="6-afternoon" aria-label="週六下午">
+                                    </label>
+
+                                    <!-- 晚上 -->
+                                    <div class="availability-period">晚上</div>
+
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="0-evening" aria-label="週日晚上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="1-evening" aria-label="週一晚上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="2-evening" aria-label="週二晚上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="3-evening" aria-label="週三晚上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="4-evening" aria-label="週四晚上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="5-evening" aria-label="週五晚上">
+                                    </label>
+                                    <label class="availability-slot">
+                                        <input type="checkbox" name="availability" value="6-evening" aria-label="週六晚上">
+                                    </label>
+
+                                </div>
+
+                                <!-- 已選擇時段數量 -->
+                                <p class="teacher-availability-count" id="teacher-availability-count">
+                                    已選擇 0 個時段
+                                </p>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- 第三區：自我介紹 -->
+                    <div class="teacher-form-group">
+                        <h2 class="form-section-title">
+                            <i data-lucide="message-square-text"></i>
+                            自我介紹
+                        </h2>
+
+                        <div class="teacher-field">
+                            <label for="teacher-introduction">
+                                教學經驗與個人介紹
+                                <span class="required">*</span>
+                            </label>
+
+                            <textarea
+                                id="teacher-introduction"
+                                name="introduction"
+                                rows="7"
+                                maxlength="2000"
+                                placeholder="介紹你的教學經驗、教學風格，以及你擅長的科目或教學方式..."
+                                required
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <!-- 表單送出 -->
+                    <div class="teacher-form-actions">
+                        <button
+                            type="submit"
+                            id="teacher-submit"
+                            class="teacher-submit-button"
+                        >
+                            送出老師申請
+                            <i data-lucide="arrow-right"></i>
+                        </button>
+                    </div>
+
+                </form>
+            </section>
+
+            <!-- 老師資料儲存成功通知 -->
+            <div id="teacher-success-modal" class="teacher-success-modal" hidden>
+                <div class="teacher-success-card" role="status" aria-live="polite">
+
+                    <div class="teacher-success-icon">
+                        <i data-lucide="circle-check"></i>
+                    </div>
+
+                    <h2 id="teacher-success-title">老師資料更新成功！</h2>
+
+                    <p>你的老師資料已成功儲存，即將前往個人介紹頁面。</p>
+
+                    <div class="teacher-success-loading">
+                        正在跳轉頁面...
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+    
+</body>
+</html>

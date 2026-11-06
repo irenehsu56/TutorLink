@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜我的收藏老師</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/teachers.css">
+    <link rel="stylesheet" href="/static/css/my-favorites.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+    <script src="/static/js/my-favorites.js" defer></script>
+</head>
+
+<body>
+    <!-- 引入共用 Header -->
+    {% set active_page = "my-favorites" %}
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <main class="favorites-page">
+
+        <section class="favorites-header">
+            <h1>
+                <i data-lucide="heart"></i>
+                我的收藏老師
+            </h1>
+
+            <p>在這裡查看你收藏的家教老師，隨時找到適合的教學人選。</p>
+        </section>
+
+        <!-- 收藏清單：之後由 JavaScript 產生老師卡片 -->
+        <section class="favorites-content">
+
+            <div id="favorites-loading">
+                正在載入收藏老師...
+            </div>
+
+            <!-- 未登入會員提示 -->
+            <div id="favorites-login-required" hidden>
+                <div class="favorites-login-card">
+                    <div class="favorites-login-icon">
+                        <i data-lucide="lock-keyhole"></i>
+                    </div>
+
+                    <h2>請先登入會員</h2>
+
+                    <p>
+                        登入 TutorLink 後，即可查看你收藏的家教老師，
+                        <br>
+                        隨時找到適合的教學人選！
+                    </p>
+
+                    <button
+                        type="button"
+                        id="favorites-login-button"
+                        class="favorites-login-button"
+                    >
+                        立即登入
+                    </button>
+                </div>
+            </div>
+
+            <div id="favorites-list"></div>
+
+            <div id="favorites-empty" hidden>
+                <i data-lucide="heart"></i>
+                <h2>目前還沒有收藏的老師</h2>
+                <p>快去尋找適合你的家教老師吧！</p>
+                <a href="/teachers.html">尋找家教老師</a>
+            </div>
+
+        </section>
+
+    </main>
+</body>
+</html>

@@ -1,0 +1,833 @@
+/* Auth Modal 會員登入／註冊視窗 */
+/* 會員視窗專用的顏色變數 */
+.auth-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    box-sizing: border-box;
+}
+/* 隱藏整個會員視窗 */
+.auth-modal[hidden] {
+    display: none !important;
+}
+
+/* Overlay 背景遮罩 */
+.auth-overlay {
+    position: absolute;
+    inset: 0;
+
+    /* 黑色半透明背景 */
+    background: rgba(0, 0, 0, 0.5);
+}
+
+/* Container 視窗主體 */
+.auth-container {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+
+    padding: 36px;
+    box-sizing: border-box;
+
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.15);
+
+    color: var(--text-dark);
+}
+
+/* Close Button 關閉按鈕 */
+.auth-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 32px;
+    height: 32px;
+
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+
+    background: transparent;
+    color: #999999;
+    cursor: pointer;
+
+    transition: background 0.2s, color 0.2s;
+}
+.auth-close:hover {
+    background: #fff0e5;
+    color: var(--primary);
+}
+.auth-close svg {
+    width: 20px;
+    height: 20px;
+}
+
+/* Header Logo 與標題 */
+.auth-header {
+    text-align: center;
+    margin-bottom: 26px;
+}
+.auth-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    margin-bottom: 22px;
+
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+/* Logo 學士帽圖示 */
+.auth-logo svg {
+    width: 30px;
+    height: 30px;
+    color: var(--primary);
+}
+/* Logo 的 Link 文字 */
+.auth-logo strong {
+    color: var(--primary);
+}
+.auth-header h2 {
+    margin: 0 0 10px;
+
+    font-size: 24px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+.auth-header p {
+    margin: 0;
+
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-gray);
+}
+
+/* Tabs 登入／註冊切換 */
+.auth-tabs {
+    display: flex;
+    gap: 6px;
+
+    padding: 5px;
+    margin-bottom: 24px;
+
+    background: #fff3e9;
+    border-radius: 12px;
+}
+.auth-tab {
+    flex: 1;
+
+    padding: 12px;
+    border: none;
+    border-radius: 9px;
+
+    background: transparent;
+    color: var(--text-gray);
+
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: background 0.2s, color 0.2s;
+}
+/* 目前選取的頁籤 */
+.auth-tab.active {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 2px 8px rgba(255, 121, 40, 0.2);
+}
+/* 尚未選取的頁籤 */
+.auth-tab:not(.active):hover {
+    background: #ffe7d4;
+}
+
+/* Form 登入／註冊表單 */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+/* 單一欄位：標籤 + 輸入框 */
+.auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.auth-field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Input 輸入框與圖示 */
+.auth-input-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--white);
+
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+/* 輸入框左側圖示 */
+.auth-input-wrapper svg {
+    flex-shrink: 0;
+
+    width: 18px;
+    height: 18px;
+    color: #a39b94;
+}
+/* 真正輸入文字的 input */
+.auth-input-wrapper input {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    height: 46px;
+
+    padding: 0;
+    margin: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-dark);
+}
+.auth-input-wrapper input::placeholder {
+    color: #aaaaaa;
+}
+/* 使用者點進輸入框時 */
+.auth-input-wrapper:focus-within {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 121, 40, 0.12);
+}
+.auth-input-wrapper:focus-within svg {
+    color: var(--primary);
+}
+
+/* Message 表單提示訊息 */
+/* 預設錯誤訊息：淡紅色背景 */
+.auth-message {
+    margin: 0;
+    padding: 14px 12px;
+
+    background: #fff0f0;
+    border: 1px solid #f5c6c6;
+    border-radius: 10px;
+
+    color: #d64545;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.6;
+}
+/* 沒有訊息時不顯示，也不佔空間 */
+.auth-message:empty {
+    display: none;
+}
+/* 成功訊息：淡綠色背景 */
+.auth-message.success {
+    background: #edf8f0;
+    border-color: #c5e7d0;
+    color: #23835a;
+}
+
+/* Submit Button 送出按鈕 */
+.auth-submit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    width: 100%;
+    min-height: 48px;
+
+    padding: 12px 16px;
+    border: none;
+    border-radius: 10px;
+
+    background: var(--primary);
+    color: var(--white);
+
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: background 0.2s, transform 0.2s;
+}
+.auth-submit:hover {
+    background: var(--primary-dark);
+    transform: translateY(-1px);
+}
+.auth-submit:active {
+    transform: translateY(0);
+}
+.auth-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+.auth-submit svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Footer 視窗底部文字 */
+.auth-footer {
+    margin: 24px 0 0;
+
+    text-align: center;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--text-gray);
+}
+
+/* Accessibility 鍵盤操作 */
+.auth-close:focus-visible,
+.auth-tab:focus-visible,
+.auth-submit:focus-visible {
+    outline: 3px solid rgba(255, 121, 40, 0.55);
+    outline-offset: 3px;
+}
+
+/* Toast 登入成功通知 */
+.auth-toast {
+    position: fixed;
+    top: 96px;
+    right: 24px;
+    z-index: 2000;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    width: max-content;
+    max-width: calc(100vw - 32px);
+    padding: 16px 20px;
+
+    background: var(--white);
+    border: 1px solid #c5e7d0;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+    animation: auth-toast-in 0.25s ease-out;
+}
+.auth-toast-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    width: 36px;
+    height: 36px;
+
+    background: #edf8f0;
+    border-radius: 50%;
+
+    color: #23835a;
+    font-size: 22px;
+    font-weight: 700;
+}
+.auth-toast-content strong {
+    display: block;
+    margin-bottom: 4px;
+
+    color: var(--text-dark);
+    font-size: 15px;
+}
+.auth-toast-content p {
+    margin: 0;
+
+    color: var(--text-gray);
+    font-size: 13px;
+}
+
+/* Delete Account Modal 刪除會員帳號確認視窗 */
+/* 整個視窗 */
+.delete-account-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    box-sizing: border-box;
+}
+/* 預設隱藏 */
+.delete-account-modal[hidden] {
+    display: none !important;
+}
+/* 半透明背景遮罩 */
+.delete-account-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+/* 視窗主體 */
+.delete-account-container {
+    position: relative;
+    z-index: 1;
+
+    width: 100%;
+    max-width: 440px;
+    max-height: calc(100dvh - 48px);
+    overflow-y: auto;
+
+    padding: 36px;
+    box-sizing: border-box;
+
+    background: var(--white);
+    border-radius: 20px;
+    box-shadow: 0 16px 50px rgba(0, 0, 0, 0.15);
+
+    color: var(--text-dark);
+    text-align: center;
+}
+/* 警告圖示 */
+.delete-account-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 20px;
+
+    background: #fff0f0;
+    border-radius: 50%;
+    color: #d64545;
+}
+.delete-account-icon svg {
+    width: 32px;
+    height: 32px;
+}
+/* 標題 */
+.delete-account-container h2 {
+    margin: 0 0 14px;
+    font-size: 23px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+/* 說明文字 */
+.delete-account-container p {
+    margin: 0 0 28px;
+
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.8;
+}
+/* 底部操作按鈕 */
+.delete-account-actions {
+    display: flex;
+    gap: 12px;
+}
+.delete-account-cancel,
+.delete-account-confirm {
+    flex: 1;
+    min-height: 46px;
+    padding: 12px 14px;
+
+    border: none;
+    border-radius: 10px;
+
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+}
+/* 取消按鈕 */
+.delete-account-cancel {
+    background: #f3f4f6;
+    color: var(--text-dark);
+}
+.delete-account-cancel:hover {
+    background: #e5e7eb;
+}
+/* 確認刪除按鈕 */
+.delete-account-confirm {
+    background: #d64545;
+    color: var(--white);
+}
+.delete-account-confirm:hover {
+    background: #b91c1c;
+}
+.delete-account-confirm:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* 鍵盤焦點 */
+.delete-account-cancel:focus-visible,
+.delete-account-confirm:focus-visible {
+    outline: 3px solid rgba(255, 121, 40, 0.55);
+    outline-offset: 3px;
+}
+
+/* 通知出現動畫 */
+@keyframes auth-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Member Menu 會員選單 */
+/* 會員選單容器 */
+.member-menu {
+    position: relative;
+}
+/* 確保 hidden 可以正常隱藏元素 */
+.member-menu[hidden],
+.member-dropdown[hidden] {
+    display: none;
+}
+/* 會員名稱按鈕 */
+.member-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+
+    padding: 10px 18px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    transition: border-color 0.2s, background 0.2s;
+}
+.member-trigger:hover {
+    border-color: var(--primary);
+    background: #fff8f0;
+}
+/* 會員按鈕中的圖示 */
+.member-trigger svg {
+    width: 20px;
+    height: 20px;
+    color: var(--primary);
+}
+/* 下拉箭頭稍微小一點 */
+.member-trigger svg:last-child {
+    width: 16px;
+    height: 16px;
+    color: var(--text-gray);
+}
+/* 會員下拉選單 */
+.member-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    z-index: 200;
+
+    width: 280px;
+    padding: 12px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+/* 會員下拉選單｜個人資料（尚未開放） */
+.member-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: var(--text-gray);
+    font-size: 14px;
+    text-align: left;
+
+    cursor: not-allowed;
+}
+/* 個人資料 Icon */
+.member-profile svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+/* 避免 disabled 按鈕套用瀏覽器預設透明度 */
+.member-profile:disabled {
+    opacity: 1;
+}
+
+/* 我的收藏老師 */
+.member-favorites {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: var(--text-dark);
+    font-size: 14px;
+    text-align: left;
+    text-decoration: none;
+
+    transition: background 0.2s, color 0.2s;
+}
+/* 滑鼠移入收藏老師 */
+.member-favorites:hover {
+    background: #fff3e9;
+    color: var(--primary);
+}
+/* 收藏老師圖示 */
+.member-favorites svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 個人行事曆 */
+.member-calendar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: var(--text-dark);
+    font-size: 14px;
+    text-align: left;
+    text-decoration: none;
+
+    transition: background 0.2s, color 0.2s;
+}
+/* 滑鼠移入個人行事曆 */
+.member-calendar:hover {
+    background: #fff3e9;
+    color: var(--primary);
+}
+/* 個人行事曆圖示 */
+.member-calendar svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 登出按鈕 */
+.member-logout {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: var(--text-dark);
+    font-size: 14px;
+    text-align: left;
+
+    transition: background 0.2s, color 0.2s;
+}
+.member-logout:hover {
+    background: #fff3e9;
+    color: var(--primary);
+}
+/* 登出圖示 */
+.member-logout svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Delete Account 刪除帳號 */
+/* 刪除帳號按鈕 */
+.member-delete {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    width: 100%;
+    padding: 12px;
+
+    background: transparent;
+    border: none;
+    border-radius: 8px;
+
+    color: #d64545;
+    font-size: 14px;
+    text-align: left;
+
+    transition: background 0.2s, color 0.2s;
+}
+/* 滑鼠移入刪除帳號 */
+.member-delete:hover {
+    background: #fff0f0;
+    color: #b91c1c;
+}
+/* 刪除帳號圖示 */
+.member-delete svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* 鍵盤操作時的焦點樣式 */
+.member-trigger:focus-visible,
+.member-role-option:focus-visible,
+.member-favorites:focus-visible,
+.member-calendar:focus-visible,
+.member-logout:focus-visible,
+.member-delete:focus-visible {
+    outline: 3px solid rgba(255, 121, 40, 0.4);
+    outline-offset: 2px;
+}
+
+/* 登入後隱藏 Header 的登入／註冊按鈕 */
+.nav-actions [data-auth-open][hidden] {
+    display: none;
+}
+
+/* Auth Loading 會員狀態載入*/
+/* 會員狀態確認完成後，才顯示 Header 按鈕 */
+body.auth-ready .nav-actions [data-auth-open],
+body.auth-ready .nav-actions .member-menu {
+    visibility: visible;
+}
+/* 確保 hidden 屬性仍然有效 */
+.nav-actions [data-auth-open][hidden],
+.nav-actions .member-menu[hidden] {
+    display: none;
+}
+
+/* RWD 手機版 */
+@media (max-width: 600px) {
+    .auth-modal {
+        padding: 16px;
+    }
+    .auth-container {
+        max-height: calc(100dvh - 32px);
+        padding: 28px 22px;
+        border-radius: 16px;
+    }
+    .auth-header {
+        margin-bottom: 22px;
+    }
+    .auth-logo {
+        font-size: 22px;
+    }
+    .auth-header h2 {
+        font-size: 21px;
+    }
+    .auth-header p {
+        font-size: 13px;
+    }
+    .auth-tabs {
+        margin-bottom: 20px;
+    }
+    .auth-form {
+        gap: 16px;
+    }
+    .auth-toast {
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        width: auto;
+    }
+    .member-trigger {
+        padding: 7px 12px;
+        gap: 6px;
+        font-size: 13px;
+    }
+    .member-trigger svg {
+        width: 18px;
+        height: 18px;
+    }
+    .member-trigger svg:last-child {
+        width: 14px;
+        height: 14px;
+    }
+    .member-dropdown {
+        width: min(280px, calc(100vw - 32px));
+    }
+    .delete-account-modal {
+        padding: 16px;
+    }
+    .delete-account-container {
+        max-height: calc(100dvh - 32px);
+        padding: 28px 22px;
+        border-radius: 16px;
+    }
+    .delete-account-container h2 {
+        font-size: 21px;
+    }
+    .delete-account-actions {
+        flex-direction: column;
+    }
+}
+
+/* 使用者偏好減少動態效果時，關閉會員視窗的動畫 */
+@media (prefers-reduced-motion: reduce) {
+    .auth-container,
+    .auth-container *,
+    .auth-container *::before,
+    .auth-container *::after {
+        transition: none;
+        animation: none;
+    }
+    .auth-toast {
+        animation: none;
+    }
+    .delete-account-container,
+    .delete-account-container * {
+        transition: none;
+        animation: none;
+    }
+}

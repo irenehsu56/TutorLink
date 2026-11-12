@@ -558,13 +558,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return hasLessonEnded(booking) && !booking.completed_at;
         });
 
-        // 付款紀錄：所有已接受預約的課程，且尚未付款成功
-        // 不論課程是否已經上完，都要列入
+        // 付款紀錄：所有已接受預約的課程
+        // 無論是否付款成功、是否已完成上課，都保留紀錄
         const paymentRecords = monthlyRecords.filter(booking => {
-            return (
-                booking.status === "accepted" &&
-                booking.payment_status !== "paid"
-            );
+            return booking.status === "accepted";
         });
 
         // 已完成：課程已完成，而且付款成功

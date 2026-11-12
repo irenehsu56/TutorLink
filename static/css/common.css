@@ -186,6 +186,171 @@ button {
     pointer-events: none;
 }
 
+/* 會員課程提醒紅點 */
+.member-notification-dot,
+.member-calendar-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    min-width: 8px;
+    border-radius: 50%;
+    background-color: #e74c3c;
+    flex-shrink: 0;
+}
+/* 確保 hidden 屬性可以隱藏紅點 */
+.member-notification-dot[hidden],
+.member-calendar-dot[hidden] {
+    display: none !important;
+}
+.member-calendar-dot {
+    margin-left: auto;
+}
+
+/* 會員專屬頁面｜共用標題樣式 */
+.member-page-heading {
+    display: block;
+    margin-bottom: 45px;
+    text-align: center;
+}
+.member-page-heading h1,
+.profile-heading.member-page-heading h1,
+.calendar-header.member-page-heading h1,
+.notifications-header.member-page-heading h1,
+.favorites-header.member-page-heading h1 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 0;
+
+    color: var(--text-dark);
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.4;
+    letter-spacing: normal;
+}
+.member-page-heading h1 svg,
+.profile-heading.member-page-heading h1 svg,
+.calendar-header.member-page-heading h1 svg,
+.notifications-header.member-page-heading h1 svg,
+.favorites-header.member-page-heading h1 svg {
+    width: 36px;
+    height: 36px;
+    flex-shrink: 0;
+    color: var(--primary);
+}
+.member-page-heading p,
+.profile-heading.member-page-heading p,
+.calendar-header.member-page-heading p,
+.notifications-header.member-page-heading p,
+.favorites-header.member-page-heading p {
+    margin: 16px 0 0;
+    color: var(--text-gray);
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.8;
+}
+
+/* TutorLink 共用｜會員未登入提示 */
+/* 未登入時禁止背景捲動 */
+html:has(body.member-login-required) {
+    overflow: hidden;
+}
+body.member-login-required {
+    overflow: hidden;
+    background: #fff8f1;
+}
+/* 未登入提示：覆蓋頁面內容，保留 Header */
+.member-login-screen.member-login-screen {
+    position: fixed;
+    inset: 100px 0 0;
+    z-index: 900;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 24px;
+    overflow-y: auto;
+    background: #fff8f1;
+}
+/* 確保 hidden 生效 */
+.member-login-screen[hidden] {
+    display: none !important;
+}
+/* 統一登入提示卡片 */
+.member-login-card.member-login-card {
+    width: 100%;
+    max-width: 500px;
+    padding: 48px 36px;
+
+    text-align: center;
+    background: var(--white);
+    border: 1px solid #ffe1cc;
+    border-radius: 24px;
+    box-shadow: 0 12px 40px rgba(255, 121, 40, 0.08);
+}
+/* 圓形鎖頭圖示 */
+.member-login-icon.member-login-icon {
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: #fff0e5;
+    color: var(--primary);
+}
+.member-login-icon svg {
+    width: 34px;
+    height: 34px;
+}
+/* 標題 */
+.member-login-card.member-login-card h2 {
+    margin: 0 0 14px;
+    color: var(--text-dark);
+    font-size: 26px;
+    font-weight: 700;
+}
+/* 說明文字 */
+.member-login-card.member-login-card p {
+    max-width: none;
+    margin: 0 auto 28px;
+    color: var(--text-gray);
+    font-size: 15px;
+    line-height: 1.9;
+}
+/* 登入按鈕 */
+.member-login-card.member-login-card button {
+    width: 100%;
+    max-width: 240px;
+    padding: 14px 24px;
+
+    border: none;
+    border-radius: 12px;
+    background: var(--primary);
+    color: var(--white);
+
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.member-login-card.member-login-card button:hover {
+    background: var(--primary-dark);
+}
+/* 未登入時隱藏原本頁面標題 */
+body.member-login-required .member-page-heading {
+    display: none !important;
+}
+/* 登入視窗必須顯示在提示卡片上方 */
+body.member-login-required #auth-modal {
+    z-index: 1000;
+}
+
 /* RWD 平板 */
 @media (min-width: 801px) and (max-width: 1100px) {
     .navbar {
@@ -295,5 +460,41 @@ button {
     .btn-register {
         padding: 7px 13px;
         font-size: 13px;
+    }
+    .member-page-heading {
+        margin-bottom: 32px;
+    }
+
+    .member-page-heading h1,
+    .profile-heading.member-page-heading h1,
+    .calendar-header.member-page-heading h1,
+    .notifications-header.member-page-heading h1,
+    .favorites-header.member-page-heading h1 {
+        gap: 10px;
+        font-size: 28px;
+    }
+    .member-page-heading h1 svg,
+    .profile-heading.member-page-heading h1 svg,
+    .calendar-header.member-page-heading h1 svg,
+    .notifications-header.member-page-heading h1 svg,
+    .favorites-header.member-page-heading h1 svg {
+        width: 28px;
+        height: 28px;
+    }
+    .member-page-heading p,
+    .profile-heading.member-page-heading p,
+    .calendar-header.member-page-heading p,
+    .notifications-header.member-page-heading p,
+    .favorites-header.member-page-heading p {
+        font-size: 14px;
+    }
+    .member-login-screen.member-login-screen {
+        padding: 24px;
+    }
+    .member-login-card.member-login-card {
+        padding: 36px 24px;
+    }
+    .member-login-card.member-login-card h2 {
+        font-size: 23px;
     }
 }

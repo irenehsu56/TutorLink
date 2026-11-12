@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜通知中心</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/notifications.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/notifications.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+</head>
+<body>
+    <!-- 引入共用 Header -->
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <main class="notifications-page">
+
+        <!-- 頁面標題 -->
+        <section class="notifications-header member-page-heading">
+            <h1>
+                <i data-lucide="bell"></i>
+                通知中心
+            </h1>
+            <p>在這裡查看課後評價與老師回覆的最新消息。</p>
+        </section>
+
+        <!-- 通知內容 -->
+        <section class="notifications-content">
+
+            <!-- 載入中 -->
+            <div id="notifications-loading">
+                正在載入通知...
+            </div>
+
+            <!-- 未登入提示 -->
+            <div
+                id="notifications-login-required"
+                class="member-login-screen"
+                hidden
+            >
+                <div class="member-login-card">
+
+                    <div class="member-login-icon">
+                        <i data-lucide="lock-keyhole"></i>
+                    </div>
+
+                    <h2>請先登入會員</h2>
+
+                    <p>
+                        登入 TutorLink 後，即可查看課後評價通知，
+                        <br>
+                        掌握最新的學生評價與老師回覆！
+                    </p>
+
+                    <button
+                        type="button"
+                        id="notifications-login-button"
+                    >
+                        立即登入
+                    </button>
+
+                </div>
+            </div>
+
+            <!-- 通知清單 -->
+            <div
+                id="notifications-list"
+                aria-live="polite"
+            ></div>
+
+            <!-- 沒有通知 -->
+            <div id="notifications-empty" hidden>
+                <i data-lucide="bell-off"></i>
+
+                <h2>目前沒有通知</h2>
+
+                <p>
+                    當課程完成、收到學生評價或老師回覆時，
+                    通知就會顯示在這裡。
+                </p>
+            </div>
+
+            <!-- 載入失敗 -->
+            <div id="notifications-error" role="alert" hidden>
+                通知載入失敗，請稍後重新整理頁面。
+            </div>
+
+        </section>
+
+    </main>
+</body>
+</html>

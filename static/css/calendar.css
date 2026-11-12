@@ -1,5 +1,6 @@
 /* Calendar 個人行事曆 */
 
+/* 1. 頁面基本排版 */
 /* 頁面主容器 */
 .calendar-page {
     max-width: 1200px;
@@ -7,20 +8,292 @@
     padding: 48px 24px 80px;
 }
 /* 頁面標題 */
-.calendar-header {
-    margin-bottom: 28px;
+.calendar-header.member-page-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    margin: 0 auto 64px;
+    text-align: center;
+
+    transform: translateY(20px);
 }
-.calendar-header h1 {
-    font-size: 30px;
-    font-weight: 700;
-    color: var(--text-dark);
+.calendar-header.member-page-heading h1 {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
 }
-.calendar-header p {
-    margin-top: 8px;
-    font-size: 15px;
-    color: var(--text-gray);
+.calendar-header.member-page-heading p {
+    width: 100%;
+    text-align: center;
 }
 
+/* 我的課程｜分頁切換 */
+/* 分頁容器：取消外層白框 */
+.calendar-tabs {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-bottom: 28px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+/* 分頁按鈕 */
+.calendar-tab {
+    display: flex;
+    flex: 1;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #ffe8d6;
+    color: var(--primary-dark);
+    font: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+}
+/* 圖示 */
+.calendar-tab svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+/* 未選取時滑鼠移入 */
+.calendar-tab:not(.active):hover {
+    background: #ffead8;
+    border-color: var(--primary);
+}
+/* 選取中的分頁 */
+.calendar-tab.active {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: var(--white);
+}
+/* 選取中的分頁滑鼠移入 */
+.calendar-tab.active:hover {
+    background: #ffdbc0;
+    border-color: var(--primary-dark);
+    color: var(--white);
+}
+/* 鍵盤操作 */
+.calendar-tab:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* 確保未選取分頁完全隱藏 */
+.calendar-tab-panel[hidden] {
+    display: none;
+}
+/* 課程紀錄區塊 */
+.calendar-records-section {
+    padding: 28px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+.calendar-records-section h2 {
+    margin-bottom: 20px;
+    color: var(--text-dark);
+    font-size: 20px;
+    font-weight: 700;
+}
+
+/* 課程紀錄｜分類卡片 */
+.calendar-record-filters {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+}
+.calendar-record-filter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 0;
+    padding: 18px 12px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    color: var(--text-gray);
+    font: inherit;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+}
+.calendar-record-filter-label {
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+}
+.calendar-record-filter strong {
+    color: var(--text-dark);
+    font-size: 24px;
+    font-weight: 700;
+}
+.calendar-record-filter:hover {
+    background: #fff8f0;
+    border-color: var(--primary);
+}
+.calendar-record-filter.active {
+    background: #fff0e3;
+    border-color: var(--primary);
+}
+.calendar-record-filter.active .calendar-record-filter-label,
+.calendar-record-filter.active strong {
+    color: var(--primary-dark);
+}
+.calendar-record-filter:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* 2. 我的課程｜課程紀錄卡片 */
+#calendar-records-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.calendar-record-card {
+    padding: 22px 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.calendar-record-card:hover {
+    border-color: var(--primary);
+    box-shadow: 0 4px 16px rgba(255, 121, 40, 0.08);
+}
+.calendar-record-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+.calendar-record-title {
+    margin: 0;
+    color: var(--text-dark);
+    font-size: 17px;
+    font-weight: 700;
+}
+.calendar-record-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+.calendar-record-status.completed {
+    background: #e8f7ed;
+    color: #27834a;
+}
+.calendar-record-status.upcoming {
+    background: #fff0e3;
+    color: var(--primary-dark);
+}
+/* 課程已結束，但老師尚未確認 */
+.calendar-record-status.pending-completion {
+    background: #fff0e3;
+    color: var(--primary-dark);
+}
+.calendar-record-info {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 24px;
+}
+.calendar-record-info p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+.calendar-records-empty {
+    padding: 48px 20px;
+    color: var(--text-gray);
+    text-align: center;
+    font-size: 14px;
+}
+/* 課程紀錄｜上課與付款狀態群組 */
+.calendar-record-status-group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+/* 付款狀態標籤 */
+.calendar-record-payment-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+/* 待付款 */
+.calendar-record-payment-status.pending {
+    background: #f1f1f1;
+    color: #666666;
+}
+/* 已付款：綠界串接完成後使用 */
+.calendar-record-payment-status.paid {
+    background: #e8f7ed;
+    color: #27834a;
+}
+
+/* 課程紀錄｜老師確認完成操作區 */
+.calendar-record-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid var(--border);
+}
+.calendar-record-complete-button {
+    padding: 11px 20px;
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    color: var(--white);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.calendar-record-complete-button:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+.calendar-record-complete-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 3. 個人行事曆｜統計與月曆 */
 /* 當月預約統計 */
 .calendar-stats {
     display: grid;
@@ -379,7 +652,7 @@
     flex-shrink: 0;
 }
 
-/* 預約卡片｜展開詳細資訊 */
+/* 4. 預約卡片｜展開詳細資訊 */
 /* 收合時隱藏詳細資訊 */
 .calendar-booking-details[hidden] {
     display: none;
@@ -525,107 +798,327 @@
     color: #666666;
 }
 
-/* 個人行事曆｜會員登入限制 */
+/* 5. 個人行事曆｜會員登入限制 */
 /* 尚未確認登入身分，或未登入時隱藏行事曆 */
 body.calendar-auth-checking .calendar-page,
 body.calendar-login-required .calendar-page {
     display: none;
 }
-/* 未登入時鎖定背景捲動 */
-html:has(body.calendar-login-required) {
-    overflow: hidden;
+
+/* 6. 確認課程完成視窗 */
+.course-confirm-overlay[hidden] {
+    display: none;
 }
-body.calendar-login-required {
-    background: #fff8f1;
-    overflow: hidden;
-    height: 100vh;
-    height: 100dvh;
-}
-/* 未登入提示畫面 */
-.calendar-login-notice {
+.course-confirm-overlay {
     position: fixed;
-    top: 100px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 900;
-
+    inset: 0;
+    z-index: 2000;
     display: flex;
     align-items: center;
     justify-content: center;
-
-    padding: 24px;
-    background: #fff8f1;
-    overflow-y: auto;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
 }
-/* 登入提示卡片 */
-.calendar-login-card {
+.course-confirm-dialog {
     width: 100%;
-    max-width: 440px;
-    padding: 48px 36px;
-
+    max-width: 420px;
+    padding: 32px;
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
     text-align: center;
-    background: #ffffff;
-    border: 1px solid #ffe1cc;
-    border-radius: 24px;
-    box-shadow: 0 12px 40px rgba(255, 121, 40, 0.08);
 }
-/* 鎖頭圖示 */
-.calendar-login-icon {
-    width: 76px;
-    height: 76px;
-    margin: 0 auto 24px;
-
+.course-confirm-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 18px;
     border-radius: 50%;
-    background: #fff0e5;
-    color: #ff7928;
+    background: #fff0e3;
+    color: var(--primary);
 }
-.calendar-login-icon svg {
-    width: 34px;
-    height: 34px;
+.course-confirm-icon svg {
+    width: 30px;
+    height: 30px;
 }
-/* 標題 */
-.calendar-login-card h2 {
-    margin: 0 0 14px;
-    font-size: 26px;
+.course-confirm-dialog h2 {
+    margin: 0 0 12px;
+    color: var(--text-dark);
+    font-size: 22px;
     font-weight: 700;
-    color: #292929;
 }
-/* 說明文字 */
-.calendar-login-card p {
-    margin: 0 auto 28px;
-    max-width: 320px;
-
-    color: #777777;
-    font-size: 15px;
-    line-height: 1.9;
+.course-confirm-dialog p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.8;
 }
-/* 立即登入按鈕 */
-#calendar-login-button {
-    width: 100%;
-    max-width: 240px;
-    padding: 14px 24px;
-
-    border: none;
-    border-radius: 12px;
-    background: #ff7928;
-    color: #ffffff;
-
-    font-size: 16px;
-    font-weight: 700;
+.course-confirm-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 28px;
+}
+.course-confirm-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    transition: background 0.2s;
 }
-#calendar-login-button:hover {
-    background: #ed6819;
+.course-confirm-cancel {
+    background: #f3f3f3;
+    border: 1px solid #e5e5e5;
+    color: var(--text-dark);
 }
-/* 確保共用登入視窗在提示卡片上方 */
-#auth-modal {
-    z-index: 1000;
+.course-confirm-submit {
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: var(--white);
+}
+.course-confirm-submit:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+.course-confirm-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* 確認視窗｜鍵盤操作焦點 */
+.course-confirm-actions button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* 7. 課程紀錄｜學生課後評價視窗 */
+.course-review-overlay[hidden],
+.course-review-error[hidden] {
+    display: none;
+}
+.course-review-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.45);
+}
+.course-review-dialog {
+    width: 100%;
+    max-width: 480px;
+    max-height: calc(100dvh - 40px);
+    overflow-y: auto;
+    padding: 30px;
+    background: var(--white);
+    border-radius: 18px;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.15);
+}
+.course-review-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    background: #fff0e3;
+    color: var(--primary);
+}
+.course-review-icon svg {
+    width: 28px;
+    height: 28px;
+}
+.course-review-dialog h2 {
+    margin: 0 0 10px;
+    color: var(--text-dark);
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+}
+.course-review-description {
+    margin: 0 0 22px;
+    color: var(--text-gray);
+    font-size: 14px;
+    line-height: 1.7;
+    text-align: center;
+}
+.course-review-summary {
+    padding: 16px;
+    margin-bottom: 22px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+.course-review-summary strong {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    font-size: 15px;
+}
+.course-review-summary p {
+    margin: 6px 0 0;
+    color: var(--text-gray);
+    font-size: 13px;
+}
+.course-review-field label {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 600;
+}
+.course-review-field textarea {
+    width: 100%;
+    min-height: 130px;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    background: var(--white);
+    color: var(--text-dark);
+    font: inherit;
+    font-size: 14px;
+    line-height: 1.7;
+    resize: vertical;
+    box-sizing: border-box;
+}
+.course-review-field textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 121, 40, 0.12);
+}
+.course-review-field-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 8px;
+    color: var(--text-gray);
+    font-size: 12px;
+}
+.course-review-error {
+    margin: 14px 0 0;
+    color: #c0392b;
+    font-size: 13px;
+}
+.course-review-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+}
+.course-review-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+.course-review-cancel {
+    background: #f3f3f3;
+    border: 1px solid #e5e5e5;
+    color: var(--text-dark);
+}
+.course-review-submit {
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    color: var(--white);
+}
+.course-review-submit:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+.course-review-actions button:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+.course-review-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 8. 學生專屬｜立即付款按鈕 */
+.calendar-record-pay-button {
+    padding: 11px 20px;
+    background: var(--primary);
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    color: var(--white);
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+.calendar-record-pay-button:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+.calendar-record-pay-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* 9. TutorLink｜課程頁面 Toast 通知 */
+.calendar-toast {
+    position: fixed;
+    top: 90px;
+    right: 24px;
+    z-index: 9999;
+
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    max-width: min(420px, calc(100vw - 32px));
+    padding: 15px 20px;
+
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--primary);
+    border-radius: 12px;
+
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.6;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-12px);
+
+    transition:
+        opacity 0.25s ease,
+        transform 0.25s ease,
+        visibility 0.25s ease;
+
+    pointer-events: none;
+}
+.calendar-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+.calendar-toast svg {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    color: var(--primary);
+}
+.calendar-toast.success {
+    border-left-color: #23835a;
+}
+.calendar-toast.success svg {
+    color: #23835a;
+}
+.calendar-toast.error {
+    border-left-color: #dc4545;
+}
+.calendar-toast.error svg {
+    color: #dc4545;
 }
 
 /* RWD 平板 */
@@ -650,11 +1143,63 @@ body.calendar-login-required {
 
 /* RWD 手機 */
 @media (max-width: 600px) {
+    .calendar-header.member-page-heading {
+        margin-bottom: 40px;
+    }
     .calendar-page {
         padding: 28px 16px 48px;
     }
-    .calendar-header h1 {
-        font-size: 24px;
+    .calendar-tabs {
+        width: 100%;
+        gap: 6px;
+        padding: 0;
+        margin-bottom: 20px;
+    }
+    .calendar-tab {
+        flex: 1;
+        min-width: 0;
+        padding: 12px 8px;
+        font-size: 14px;
+    }
+    .calendar-records-section {
+        padding: 18px;
+    }
+    .calendar-record-card {
+        padding: 18px;
+    }
+    .calendar-record-header {
+        align-items: flex-start;
+    }
+    .calendar-record-title {
+        font-size: 15px;
+    }
+    .calendar-record-info {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .calendar-record-filters {
+        gap: 8px;
+        margin-bottom: 18px;
+    }
+    .calendar-record-filter {
+        padding: 14px 6px;
+        gap: 6px;
+    }
+    .calendar-record-filter-label {
+        font-size: 12px;
+    }
+    .calendar-record-filter strong {
+        font-size: 20px;
+    }
+    .calendar-record-status-group {
+        gap: 6px;
+    }
+    .calendar-record-payment-status {
+        padding: 5px 10px;
+        font-size: 11px;
+    }
+    .calendar-record-complete-button {
+        width: 100%;
     }
     .calendar-stats {
         gap: 8px;
@@ -724,5 +1269,29 @@ body.calendar-login-required {
     }
     .calendar-login-card h2 {
         font-size: 23px;
+    }
+    .course-confirm-dialog {
+        padding: 24px 20px;
+    }
+    .course-confirm-dialog h2 {
+        font-size: 20px;
+    }
+    .course-confirm-actions {
+        gap: 10px;
+    }
+    .course-review-dialog {
+        padding: 24px 20px;
+    }
+    .course-review-dialog h2 {
+        font-size: 20px;
+    }
+    .course-review-actions {
+        gap: 10px;
+    }
+    .calendar-toast {
+        top: 80px;
+        left: 16px;
+        right: 16px;
+        max-width: none;
     }
 }

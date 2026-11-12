@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TutorLink｜個人資料</title>
+
+    <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
+    <style>
+        .nav-actions [data-auth-open],
+        .nav-actions .member-menu {
+            visibility: hidden;
+        }
+    </style>
+
+    <!-- CSS/Lucide Icons/JavaScript -->
+    <link rel="stylesheet" href="/static/css/common.css">
+    <link rel="stylesheet" href="/static/css/auth.css">
+    <link rel="stylesheet" href="/static/css/profile.css">
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js" defer></script>
+    <script src="/static/js/profile.js" defer></script>
+    <script src="/static/js/auth.js" defer></script>
+</head>
+<body>
+    <!-- 引入共用 Header -->
+    {% include "components/header.html" %}
+
+    <!-- 引入共用會員登入／註冊視窗 -->
+    {% include "components/auth.html" %}
+
+    <!-- 會員個人資料編輯頁面 -->
+    <main class="profile-page">
+
+        <!-- 頁面標題 -->
+        <div class="profile-heading member-page-heading">
+            <h1>
+                <i data-lucide="user-round"></i>
+                個人資料
+            </h1>
+            <p>管理你的會員資料、個人頭貼與帳號安全設定</p>
+        </div>
+
+        <!-- 尚未登入時的提示 -->
+        <section
+            class="profile-login-required member-login-screen"
+            id="profile-login-required"
+            hidden
+        >
+            <div class="member-login-card">
+
+                <div class="member-login-icon">
+                    <i data-lucide="lock-keyhole"></i>
+                </div>
+
+                <h2>請先登入會員</h2>
+
+                <p>
+                    登入 TutorLink 後，即可查看與編輯個人資料，
+                    <br>
+                    管理你的會員帳號！
+                </p>
+
+                <button type="button" data-auth-open="login">
+                    立即登入
+                </button>
+
+            </div>
+        </section>
+
+        <!-- 個人資料操作提示 -->
+        <div
+            id="profile-toast"
+            class="profile-toast"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            hidden
+        >
+            <span id="profile-toast-message"></span>
+        </div>
+
+        <!-- 會員資料區域 -->
+        <div class="profile-content" id="profile-content" hidden>
+
+            <section class="profile-card profile-main-card">
+
+                <!-- 左側：會員頭貼 -->
+                <div class="profile-left">
+
+                    <div class="profile-avatar" id="profile-avatar">
+                        <i data-lucide="user-round"></i>
+                    </div>
+
+                    <input
+                        type="file"
+                        id="profile-photo-input"
+                        accept="image/jpeg,image/png,image/webp"
+                        hidden
+                    >
+
+                    <button
+                        type="button"
+                        class="profile-outline-button"
+                        id="profile-photo-button"
+                    >
+                        <i data-lucide="camera"></i>
+                        更換頭貼
+                    </button>
+
+                    <p class="profile-photo-hint">
+                        支援 JPG、PNG、WebP<br>
+                        檔案不可超過 5 MB
+                    </p>
+
+                </div>
+
+                <!-- 右側：會員資料 -->
+                <div class="profile-right">
+
+                    <!-- 會員姓名 -->
+                    <div class="profile-detail-row">
+
+                        <div class="profile-detail-content">
+
+                            <span class="profile-detail-label">
+                                會員姓名：
+                            </span>
+
+                            <span
+                                class="profile-detail-value"
+                                id="profile-display-name"
+                            >
+                                載入中...
+                            </span>
+
+                            <!-- 點擊修改後才顯示 -->
+                            <form id="profile-info-form" hidden>
+
+                                <input
+                                    type="text"
+                                    id="profile-name"
+                                    name="name"
+                                    maxlength="50"
+                                    autocomplete="name"
+                                    required
+                                >
+
+                                <div class="profile-edit-actions">
+
+                                    <button
+                                        type="button"
+                                        class="profile-outline-button"
+                                        id="profile-name-cancel"
+                                    >
+                                        取消
+                                    </button>
+
+                                    <button
+                                        type="submit"
+                                        class="profile-primary-button"
+                                        id="profile-save-button"
+                                    >
+                                        儲存
+                                    </button>
+
+                                </div>
+
+                            </form>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="profile-outline-button"
+                            id="profile-name-edit"
+                        >
+                            <i data-lucide="pencil"></i>
+                            修改
+                        </button>
+
+                    </div>
+
+                    <!-- 電子郵件：純文字顯示 -->
+                    <div class="profile-detail-row">
+
+                        <div class="profile-detail-content">
+
+                            <span class="profile-detail-label">
+                                電子郵件：
+                            </span>
+
+                            <span
+                                class="profile-detail-value profile-email-value"
+                                id="profile-display-email"
+                            ></span>
+
+                            <p class="profile-field-hint">
+                                電子郵件為登入帳號，目前不開放修改
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <!-- 帳號安全 -->
+                    <div class="profile-security">
+
+                        <div class="profile-security-header">
+
+                            <div class="profile-security-title">
+                                <div>
+                                    <h2>帳號安全</h2>
+                                    <p>定期更新密碼，保護你的會員帳號</p>
+                                </div>
+                            </div>
+
+                            <button
+                                type="button"
+                                class="profile-primary-button"
+                                id="profile-password-toggle"
+                                aria-expanded="false"
+                                aria-controls="profile-password-form"
+                            >
+                                <i data-lucide="lock-keyhole"></i>
+                                修改密碼
+                            </button>
+
+                        </div>
+
+                        <!-- 點擊修改密碼後展開 -->
+                        <form id="profile-password-form" hidden>
+
+                            <div class="profile-password-field">
+
+                                <label for="profile-current-password">
+                                    目前密碼
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="profile-current-password"
+                                    autocomplete="current-password"
+                                    required
+                                >
+
+                            </div>
+
+                            <div class="profile-password-field">
+
+                                <label for="profile-new-password">
+                                    新密碼
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="profile-new-password"
+                                    minlength="8"
+                                    maxlength="128"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                            </div>
+
+                            <div class="profile-password-field">
+
+                                <label for="profile-confirm-password">
+                                    確認新密碼
+                                </label>
+
+                                <input
+                                    type="password"
+                                    id="profile-confirm-password"
+                                    minlength="8"
+                                    maxlength="128"
+                                    autocomplete="new-password"
+                                    required
+                                >
+
+                            </div>
+
+                            <!-- 修改密碼專用提示：錯誤顯示紅色，成功顯示綠色 -->
+                            <p
+                                id="profile-password-message"
+                                class="profile-password-message"
+                                role="status"
+                                aria-live="polite"
+                                hidden
+                            ></p>
+
+                            <div class="profile-edit-actions">
+
+                                <button
+                                    type="button"
+                                    class="profile-outline-button"
+                                    id="profile-password-cancel"
+                                >
+                                    取消
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    class="profile-primary-button"
+                                    id="profile-password-button"
+                                >
+                                    更新密碼
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+        </div>
+    </main>
+
+</body>
+</html>

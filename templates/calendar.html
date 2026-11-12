@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TutorLink｜個人行事曆</title>
+    <title>TutorLink｜我的課程／個人行事曆</title>
 
     <!-- 會員登入狀態尚未確認時，先隱藏 Header 會員按鈕 -->
     <style>
@@ -33,145 +33,372 @@
     <!-- 引入共用預約視窗 -->
     {% include "components/booking-modal.html" %}
 
-    <!-- 個人行事曆主內容 -->
+    <!-- 我的課程／個人行事曆主內容 -->
     <main class="calendar-page">
 
         <!-- 頁面標題 -->
-        <section class="calendar-header">
-            <h1>個人行事曆</h1>
-            <p>查看及管理你的課程預約</p>
+        <section class="calendar-header member-page-heading">
+            <h1>
+                <i data-lucide="calendar-days"></i>
+                我的課程 / 個人行事曆
+            </h1>
+            <p>透過行事曆管理課程預約、查看上課紀錄，並完成課後評價與回覆</p>
         </section>
 
-        <!-- 當月預約統計 -->
-        <section class="calendar-stats">
+        <!-- 我的課程｜分頁切換 -->
+        <div class="calendar-tabs" role="tablist" aria-label="我的課程分頁">
 
-            <!-- 已確認 -->
-            <div class="calendar-stat-card">
-                <div class="calendar-stat-label">
-                    <span class="calendar-status-dot confirmed"></span>
-                    <span>已確認</span>
+            <button
+                type="button"
+                id="calendar-tab-calendar"
+                class="calendar-tab active"
+                role="tab"
+                aria-selected="true"
+                aria-controls="calendar-panel-calendar"
+            >
+                <i data-lucide="calendar-days"></i>
+                行事曆
+            </button>
+
+            <button
+                type="button"
+                id="calendar-tab-records"
+                class="calendar-tab"
+                role="tab"
+                aria-selected="false"
+                aria-controls="calendar-panel-records"
+            >
+                <i data-lucide="clipboard-list"></i>
+                課程紀錄
+            </button>
+
+        </div>
+
+        <div
+            id="calendar-panel-calendar"
+            class="calendar-tab-panel"
+            role="tabpanel"
+            aria-labelledby="calendar-tab-calendar"
+        >
+
+            <!-- 當月預約統計 -->
+            <section class="calendar-stats">
+
+                <!-- 已確認 -->
+                <div class="calendar-stat-card">
+                    <div class="calendar-stat-label">
+                        <span class="calendar-status-dot confirmed"></span>
+                        <span>已確認</span>
+                    </div>
+
+                    <strong id="calendar-confirmed-count">0</strong>
                 </div>
 
-                <strong id="calendar-confirmed-count">0</strong>
-            </div>
+                <!-- 待確認 -->
+                <div class="calendar-stat-card">
+                    <div class="calendar-stat-label">
+                        <span class="calendar-status-dot pending"></span>
+                        <span>待確認</span>
+                    </div>
 
-            <!-- 待確認 -->
-            <div class="calendar-stat-card">
-                <div class="calendar-stat-label">
-                    <span class="calendar-status-dot pending"></span>
-                    <span>待確認</span>
+                    <strong id="calendar-pending-count">0</strong>
                 </div>
 
-                <strong id="calendar-pending-count">0</strong>
-            </div>
+                <!-- 已取消／已拒絕 -->
+                <div class="calendar-stat-card">
+                    <div class="calendar-stat-label">
+                        <span class="calendar-status-dot cancelled"></span>
+                        <span>已取消／已拒絕</span>
+                    </div>
 
-            <!-- 已取消／已拒絕 -->
-            <div class="calendar-stat-card">
-                <div class="calendar-stat-label">
-                    <span class="calendar-status-dot cancelled"></span>
-                    <span>已取消／已拒絕</span>
+                    <strong id="calendar-cancelled-count">0</strong>
                 </div>
 
-                <strong id="calendar-cancelled-count">0</strong>
-            </div>
+            </section>
 
-        </section>
+            <!-- 行事曆主要內容 -->
+            <section class="calendar-content">
 
-        <!-- 行事曆主要內容 -->
-        <section class="calendar-content">
+                <!-- 左側：月曆 -->
+                <div class="calendar-month-panel">
 
-            <!-- 左側：月曆 -->
-            <div class="calendar-month-panel">
+                    <!-- 月份切換 -->
+                    <div class="calendar-month-header">
 
-                <!-- 月份切換 -->
+                        <button
+                            type="button"
+                            id="calendar-prev-month"
+                            class="calendar-month-nav"
+                            aria-label="上個月"
+                        >
+                            <i data-lucide="chevron-left"></i>
+                        </button>
+
+                        <h2 id="calendar-month-title"></h2>
+
+                        <button
+                            type="button"
+                            id="calendar-next-month"
+                            class="calendar-month-nav"
+                            aria-label="下個月"
+                        >
+                            <i data-lucide="chevron-right"></i>
+                        </button>
+
+                    </div>
+
+                    <!-- 星期標題 -->
+                    <div class="calendar-weekdays">
+                        <span>日</span>
+                        <span>一</span>
+                        <span>二</span>
+                        <span>三</span>
+                        <span>四</span>
+                        <span>五</span>
+                        <span>六</span>
+                    </div>
+
+                    <!-- 月曆日期：之後由 JavaScript 動態產生 -->
+                    <div
+                        id="calendar-days"
+                        class="calendar-days"
+                    ></div>
+
+                    <!-- 預約狀態說明 -->
+                    <div class="calendar-legend">
+
+                        <div class="calendar-legend-item">
+                            <span class="calendar-status-dot confirmed"></span>
+                            <span>已確認</span>
+                        </div>
+
+                        <div class="calendar-legend-item">
+                            <span class="calendar-status-dot pending"></span>
+                            <span>待確認</span>
+                        </div>
+
+                        <div class="calendar-legend-item">
+                            <span class="calendar-status-dot cancelled"></span>
+                            <span>已取消／已拒絕</span>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- 右側：當日課程清單 -->
+                <div class="calendar-day-panel">
+
+                    <!-- 清單標題 -->
+                    <div class="calendar-day-header">
+                        <h2 id="calendar-selected-date">當日課程清單</h2>
+                        <p id="calendar-day-count">請先選擇日期</p>
+                    </div>
+
+                    <!-- 課程清單：之後由 JavaScript 動態產生 -->
+                    <div
+                        id="calendar-booking-list"
+                        class="calendar-booking-list"
+                    >
+                        <!-- 尚未選擇日期 -->
+                        <div class="calendar-empty">
+                            <i data-lucide="calendar-days"></i>
+                            <p>點選左側月曆日期，查看當天課程</p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+
+        <!-- 課程紀錄分頁 -->
+        <div
+            id="calendar-panel-records"
+            class="calendar-tab-panel"
+            role="tabpanel"
+            aria-labelledby="calendar-tab-records"
+            hidden
+        >
+            <section class="calendar-records-section">
+
+                <!-- 課程紀錄｜月份切換 -->
                 <div class="calendar-month-header">
 
                     <button
                         type="button"
-                        id="calendar-prev-month"
+                        id="records-prev-month"
                         class="calendar-month-nav"
-                        aria-label="上個月"
+                        aria-label="課程紀錄上個月"
                     >
                         <i data-lucide="chevron-left"></i>
                     </button>
 
-                    <h2 id="calendar-month-title"></h2>
+                    <h2 id="records-month-title"></h2>
 
                     <button
                         type="button"
-                        id="calendar-next-month"
+                        id="records-next-month"
                         class="calendar-month-nav"
-                        aria-label="下個月"
+                        aria-label="課程紀錄下個月"
                     >
                         <i data-lucide="chevron-right"></i>
                     </button>
 
                 </div>
 
-                <!-- 星期標題 -->
-                <div class="calendar-weekdays">
-                    <span>日</span>
-                    <span>一</span>
-                    <span>二</span>
-                    <span>三</span>
-                    <span>四</span>
-                    <span>五</span>
-                    <span>六</span>
+                <!-- 課程紀錄分類 -->
+                <div class="calendar-record-filters" role="group" aria-label="課程紀錄分類">
+
+                    <button
+                        type="button"
+                        class="calendar-record-filter"
+                        data-record-filter="pending"
+                        aria-pressed="false"
+                    >
+                        <span class="calendar-record-filter-label">
+                            待確認完成
+                        </span>
+                        <strong id="records-pending-count">0</strong>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="calendar-record-filter"
+                        data-record-filter="payments"
+                        aria-pressed="false"
+                    >
+                        <span class="calendar-record-filter-label">
+                            付款紀錄
+                        </span>
+                        <strong id="records-payments-count">0</strong>
+                    </button>
+
+                    <button
+                        type="button"
+                        class="calendar-record-filter"
+                        data-record-filter="completed"
+                        aria-pressed="false"
+                    >
+                        <span class="calendar-record-filter-label">
+                            已完成
+                        </span>
+                        <strong id="records-completed-count">0</strong>
+                    </button>
+
                 </div>
 
-                <!-- 月曆日期：之後由 JavaScript 動態產生 -->
-                <div
-                    id="calendar-days"
-                    class="calendar-days"
-                ></div>
-
-                <!-- 預約狀態說明 -->
-                <div class="calendar-legend">
-
-                    <div class="calendar-legend-item">
-                        <span class="calendar-status-dot confirmed"></span>
-                        <span>已確認</span>
-                    </div>
-
-                    <div class="calendar-legend-item">
-                        <span class="calendar-status-dot pending"></span>
-                        <span>待確認</span>
-                    </div>
-
-                    <div class="calendar-legend-item">
-                        <span class="calendar-status-dot cancelled"></span>
-                        <span>已取消／已拒絕</span>
-                    </div>
-
+                <!-- 課程紀錄清單 -->
+                <div id="calendar-records-list">
+                    <p>正在載入課程紀錄...</p>
                 </div>
 
-            </div>
-
-            <!-- 右側：當日課程清單 -->
-            <div class="calendar-day-panel">
-
-                <!-- 清單標題 -->
-                <div class="calendar-day-header">
-                    <h2 id="calendar-selected-date">當日課程清單</h2>
-                    <p id="calendar-day-count">請先選擇日期</p>
-                </div>
-
-                <!-- 課程清單：之後由 JavaScript 動態產生 -->
-                <div
-                    id="calendar-booking-list"
-                    class="calendar-booking-list"
-                >
-                    <!-- 尚未選擇日期 -->
-                    <div class="calendar-empty">
-                        <i data-lucide="calendar-days"></i>
-                        <p>點選左側月曆日期，查看當天課程</p>
-                    </div>
-                </div>
-
-            </div>
-
-        </section>
-
+            </section>
+        </div>
     </main>
+
+    <!-- 確認課程完成視窗 -->
+    <div id="complete-lesson-modal" class="course-confirm-overlay" hidden>
+        <div
+            class="course-confirm-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="complete-lesson-title"
+            aria-describedby="complete-lesson-description"
+        >
+            <div class="course-confirm-icon">
+                <i data-lucide="check-circle-2"></i>
+            </div>
+
+            <h2 id="complete-lesson-title">確認課程完成</h2>
+
+            <p id="complete-lesson-description">
+                確定這堂課已經上完了嗎？<br>
+                確認後將記錄課程完成時間，且無法重複操作。
+            </p>
+
+            <div class="course-confirm-actions">
+                <button
+                    type="button"
+                    id="complete-lesson-cancel"
+                    class="course-confirm-cancel"
+                >
+                    取消
+                </button>
+
+                <button
+                    type="button"
+                    id="complete-lesson-submit"
+                    class="course-confirm-submit"
+                >
+                    確認完成
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 學生課後評價視窗 -->
+    <div id="course-review-modal" class="course-review-overlay" hidden>
+        <div
+            class="course-review-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="course-review-title"
+            aria-describedby="course-review-description"
+        >
+            <div class="course-review-icon">
+                <i data-lucide="square-pen"></i>
+            </div>
+
+            <h2 id="course-review-title">撰寫課後評價</h2>
+
+            <p id="course-review-description" class="course-review-description">
+                分享這堂課的學習心得，讓其他學生更了解老師的教學方式。
+            </p>
+
+            <div class="course-review-summary">
+                <strong id="course-review-subject">家教課程</strong>
+                <p id="course-review-teacher">老師：</p>
+                <p id="course-review-date">上課日期：</p>
+            </div>
+
+            <div class="course-review-field">
+                <label for="course-review-content">課後評價</label>
+
+                <textarea
+                    id="course-review-content"
+                    rows="5"
+                    maxlength="200"
+                    placeholder="分享老師的教學方式、上課心得或學習收穫..."
+                ></textarea>
+
+                <div class="course-review-field-footer">
+                    <span>每堂課只能評價一次</span>
+                    <span id="course-review-count">0 / 1000</span>
+                </div>
+            </div>
+
+            <p id="course-review-error" class="course-review-error" role="alert" hidden></p>
+
+            <div class="course-review-actions">
+                <button
+                    type="button"
+                    id="course-review-cancel"
+                    class="course-review-cancel"
+                >
+                    取消
+                </button>
+
+                <button
+                    type="button"
+                    id="course-review-submit"
+                    class="course-review-submit"
+                >
+                    送出評價
+                </button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

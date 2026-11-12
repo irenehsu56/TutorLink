@@ -23,7 +23,10 @@ async function checkTeacherPageLogin() {
     const token = sessionStorage.getItem("tutorlink_token");
 
     function requireLogin() {
-        document.body.classList.add("teacher-login-required");
+        document.body.classList.add(
+            "teacher-login-required",
+            "member-login-required"
+        );
 
         // 避免重複建立通知
         if (document.getElementById("teacher-login-notice")) {
@@ -32,18 +35,18 @@ async function checkTeacherPageLogin() {
 
         const notice = document.createElement("div");
         notice.id = "teacher-login-notice";
-        notice.className = "teacher-login-notice";
+        notice.className = "teacher-login-notice member-login-screen";
 
         notice.innerHTML = `
-            <div class="teacher-login-card">
-                <div class="teacher-login-icon">
+            <div class="teacher-login-card member-login-card">
+                <div class="teacher-login-icon member-login-icon">
                     <i data-lucide="lock-keyhole"></i>
                 </div>
 
                 <h2>請先登入會員</h2>
 
                 <p>
-                    登入 TutorLink 後，即可建立個人教學檔案，
+                    登入 TutorLink 後，即可建立個人教學檔案，<br>
                     開始你的家教之旅！
                 </p>
 
@@ -85,7 +88,10 @@ async function checkTeacherPageLogin() {
             return false;
         }
 
-        document.body.classList.remove("teacher-login-required");
+        document.body.classList.remove(
+            "teacher-login-required",
+            "member-login-required"
+        );
         document.getElementById("teacher-login-notice")?.remove();
 
         return true;

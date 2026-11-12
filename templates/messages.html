@@ -43,8 +43,35 @@
                 <p>在這裡查看與老師、學生的對話紀錄</p>
             </div>
 
+            <!-- 尚未登入時的提示 -->
+            <section
+                class="messages-login-required member-login-screen"
+                id="messages-login-required"
+                hidden
+            >
+                <div class="member-login-card">
+
+                    <div class="member-login-icon">
+                        <i data-lucide="lock-keyhole"></i>
+                    </div>
+
+                    <h2>請先登入會員</h2>
+
+                    <p>
+                        登入 TutorLink 後，即可查看與老師、學生的對話紀錄，
+                        <br>
+                        並使用會員私訊功能！
+                    </p>
+
+                    <button type="button" data-auth-open="login">
+                        立即登入
+                    </button>
+
+                </div>
+            </section>
+
             <!-- 聊天主要區域 -->
-            <section class="messages-layout">
+            <section class="messages-layout" id="messages-layout" hidden>
 
                 <!-- 左側：對話列表 -->
                 <aside class="conversations-panel">

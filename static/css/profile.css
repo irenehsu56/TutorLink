@@ -1,0 +1,380 @@
+/* TutorLink 個人資料頁面 */
+.profile-page [hidden] {
+    display: none !important;
+}
+.profile-page {
+    width: min(100% - 40px, 1100px);
+    margin: 0 auto;
+    padding: 48px 0 80px;
+}
+/* 頁面標題 */
+.profile-heading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 48px;
+    text-align: center;
+}
+.profile-heading h1 {
+    margin-bottom: 10px;
+    color: var(--text-dark);
+    font-size: 30px;
+    font-weight: 800;
+}
+.profile-heading p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* 個人資料 Toast 提示 */
+.profile-toast {
+    position: fixed;
+    top: 100px;
+    right: 24px;
+    left: auto;
+    z-index: 9999;
+
+    width: max-content;
+    max-width: calc(100% - 32px);
+    padding: 14px 24px;
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    background: var(--white);
+    color: var(--text-dark);
+
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.6;
+    text-align: center;
+
+    animation: profile-toast-in 0.2s ease-out;
+}
+.profile-toast[hidden] {
+    display: none !important;
+}
+/* 成功提示 */
+.profile-toast.is-success {
+    border-color: var(--primary);
+}
+/* 錯誤提示 */
+.profile-toast.is-error {
+    border-color: #e56b6b;
+}
+
+/* 主卡片 */
+.profile-main-card {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 36px;
+    padding: 36px;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    background: var(--white);
+    box-shadow: 0 6px 24px rgba(115, 69, 29, 0.045);
+}
+
+/* 左側頭貼 */
+.profile-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 28px 20px 0;
+    border-right: 1px solid var(--border);
+}
+.profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 170px;
+    height: 170px;
+    overflow: hidden;
+    border: 3px solid var(--border);
+    border-radius: 50%;
+    background: var(--background);
+    color: var(--primary);
+}
+.profile-avatar svg {
+    width: 65px;
+    height: 65px;
+}
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.profile-photo-hint {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 12px;
+    line-height: 1.8;
+    text-align: center;
+}
+
+/* 右側基本資料 */
+.profile-right {
+    min-width: 0;
+}
+/* 右側資料列：統一高度與垂直對齊 */
+.profile-detail-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    min-height: 110px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+}
+/* 第一行不另外縮短高度 */
+.profile-detail-row:first-child {
+    padding-top: 20px;
+}
+.profile-detail-content {
+    flex: 1;
+    min-width: 0;
+}
+.profile-detail-label {
+    display: inline;
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 700;
+}
+.profile-detail-value {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+.profile-email-value {
+    color: var(--text-dark);
+}
+.profile-field-hint {
+    margin: 10px 0 0;
+    color: var(--text-gray);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* 修改姓名 */
+#profile-info-form {
+    margin-top: 14px;
+}
+#profile-name,
+.profile-password-field input {
+    width: 100%;
+    min-height: 46px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    outline: none;
+    background: var(--white);
+    color: var(--text-dark);
+    font: inherit;
+    font-size: 14px;
+}
+#profile-name:focus,
+.profile-password-field input:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(255, 121, 40, 0.12);
+}
+
+/* 帳號安全 */
+.profile-security {
+    min-height: 110px;
+    padding: 20px 0;
+}
+.profile-security-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+.profile-security-title {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+.profile-security-title h2 {
+    margin: 0 0 6px;
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 700;
+}
+.profile-security-title p {
+    margin: 0;
+    color: var(--text-gray);
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* 修改密碼展開區 */
+#profile-password-form {
+    margin-top: 26px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+.profile-password-field {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+    margin-bottom: 20px;
+}
+.profile-password-field label {
+    color: var(--text-dark);
+    font-size: 14px;
+    font-weight: 700;
+}
+
+/* 按鈕 */
+.profile-outline-button,
+.profile-primary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 42px;
+    padding: 10px 18px;
+    border: 1px solid var(--primary);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+}
+.profile-outline-button {
+    background: var(--white);
+    color: var(--primary);
+}
+.profile-outline-button:hover {
+    background: var(--primary);
+    color: var(--white);
+}
+.profile-primary-button {
+    background: var(--primary);
+    color: var(--white);
+}
+.profile-primary-button:hover {
+    background: var(--primary-dark);
+}
+.profile-outline-button svg,
+.profile-primary-button svg {
+    width: 17px;
+    height: 17px;
+}
+.profile-outline-button:disabled,
+.profile-primary-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+.profile-edit-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+/* 修改密碼表單內的提示訊息 */
+.profile-password-message {
+    margin: 0 0 18px;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.6;
+}
+/* 隱藏時不佔據版面空間 */
+.profile-password-message[hidden] {
+    display: none;
+}
+/* 錯誤訊息 */
+.profile-password-message.is-error {
+    color: #dc2626;
+}
+/* 成功訊息 */
+.profile-password-message.is-success {
+    color: #15803d;
+}
+
+/* 提示進場動畫 */
+/* Toast 從右上方淡入 */
+@keyframes profile-toast-in {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* RWD：平板 */
+@media (max-width: 800px) {
+
+    .profile-main-card {
+        grid-template-columns: 1fr;
+        gap: 26px;
+    }
+    .profile-left {
+        padding: 0 0 26px;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+    }
+}
+
+/* RWD：手機 */
+@media (max-width: 600px) {
+    .profile-page {
+        width: calc(100% - 28px);
+        padding: 22px 0 48px;
+    }
+    .profile-heading {
+        margin-bottom: 32px;
+    }
+    .profile-heading h1 {
+        font-size: 25px;
+    }
+    .profile-heading p {
+        font-size: 14px;
+    }
+    .profile-toast {
+        top: 85px;
+        right: 14px;
+        padding: 12px 18px;
+        font-size: 13px;
+    }
+    .profile-main-card {
+        padding: 22px 18px;
+        border-radius: 16px;
+    }
+    .profile-avatar {
+        width: 130px;
+        height: 130px;
+    }
+    .profile-avatar svg {
+        width: 50px;
+        height: 50px;
+    }
+    .profile-detail-row {
+        gap: 12px;
+    }
+    .profile-detail-label,
+    .profile-detail-value {
+        font-size: 14px;
+    }
+    .profile-security-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+    .profile-security-title h2 {
+        font-size: 18px;
+    }
+    .profile-security-header > button {
+        align-self: flex-end;
+    }
+}

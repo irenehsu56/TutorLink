@@ -5,12 +5,52 @@ if (window.lucide) {lucide.createIcons();}
 // ==============================
 document.addEventListener("DOMContentLoaded", () => {
 
+    // 我的課程｜分頁切換
+    const calendarTab = document.getElementById("calendar-tab-calendar");
+    const recordsTab = document.getElementById("calendar-tab-records");
+
+    const calendarPanel = document.getElementById("calendar-panel-calendar");
+    const recordsPanel = document.getElementById("calendar-panel-records");
+
+    // 切換目前顯示的分頁
+    function switchCourseTab(tabName) {
+        const showCalendar = tabName === "calendar";
+
+        // 更新分頁按鈕狀態
+        calendarTab.classList.toggle("active", showCalendar);
+        recordsTab.classList.toggle("active", !showCalendar);
+
+        calendarTab.setAttribute("aria-selected", String(showCalendar));
+        recordsTab.setAttribute("aria-selected", String(!showCalendar));
+
+        // 更新分頁內容
+        calendarPanel.hidden = !showCalendar;
+        recordsPanel.hidden = showCalendar;
+    }
+
+    // 點擊行事曆
+    calendarTab.addEventListener("click", () => {
+        switchCourseTab("calendar");
+    });
+
+    // 點擊課程紀錄
+    recordsTab.addEventListener("click", () => {
+        switchCourseTab("records");
+    });
+
     // 取得目前日期
     const today = new Date();
 
     // 目前顯示的年份、月份
     let displayedYear = today.getFullYear();
     let displayedMonth = today.getMonth();
+
+    // 課程紀錄獨立顯示的年份、月份
+    let recordsYear = today.getFullYear();
+    let recordsMonth = today.getMonth();
+
+    // 課程紀錄分類：null 代表顯示全部
+    let activeRecordFilter = null;
 
     // 儲存目前登入會員的所有預約
     let myBookings = [];
@@ -79,6 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderCalendar();
             resetDayBookings();
             updateBookingStats();
+            renderCourseRecords();
             return;
         }
 
@@ -112,9 +153,818 @@ document.addEventListener("DOMContentLoaded", () => {
             // 更新當月預約統計
             updateBookingStats();
 
+            // 更新課程紀錄清單
+            renderCourseRecords();
+
         } catch (error) {
             console.error("載入個人行事曆預約失敗：", error);
         }
+    }
+
+    // 課程完成確認視窗
+    const completeLessonModal = document.getElementById("complete-lesson-modal");
+    const completeLessonCancel = document.getElementById("complete-lesson-cancel");
+    const completeLessonSubmit = document.getElementById("complete-lesson-submit");
+
+    let completeLessonResolver = null;
+    let completeLessonPreviousFocus = null;
+
+    function closeCompleteLessonModal(confirmed) {
+        if (completeLessonModal.hidden) return;
+
+        completeLessonModal.hidden = true;
+
+        const resolve = completeLessonResolver;
+        completeLessonResolver = null;
+
+        if (completeLessonPreviousFocus?.isConnected) {
+            completeLessonPreviousFocus.focus();
+        }
+        completeLessonPreviousFocus = null;
+
+        if (resolve) resolve(confirmed);
+    }
+
+    function confirmLessonCompletion() {
+        // 防止重複開啟
+        if (completeLessonResolver) return Promise.resolve(false);
+
+        completeLessonPreviousFocus = document.activeElement;
+        completeLessonModal.hidden = false;
+        completeLessonSubmit.focus();
+
+        return new Promise(resolve => {
+            completeLessonResolver = resolve;
+        });
+    }
+
+    completeLessonCancel.addEventListener("click", () => {
+        closeCompleteLessonModal(false);
+    });
+
+    completeLessonSubmit.addEventListener("click", () => {
+        closeCompleteLessonModal(true);
+    });
+
+    completeLessonModal.addEventListener("click", event => {
+        if (event.target === completeLessonModal) {
+            closeCompleteLessonModal(false);
+        }
+    });
+
+    completeLessonModal.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            event.preventDefault();
+            closeCompleteLessonModal(false);
+        }
+
+        // 焦點維持在視窗內
+        if (event.key === "Tab") {
+            const buttons = [completeLessonCancel, completeLessonSubmit];
+            const index = buttons.indexOf(document.activeElement);
+
+            if (event.shiftKey && index === 0) {
+                event.preventDefault();
+                completeLessonSubmit.focus();
+            } else if (!event.shiftKey && index === 1) {
+                event.preventDefault();
+                completeLessonCancel.focus();
+            }
+        }
+    });
+
+    // 課程紀錄｜學生課後評價視窗
+    const courseReviewModal = document.getElementById("course-review-modal");
+    const courseReviewContent = document.getElementById("course-review-content");
+    const courseReviewCount = document.getElementById("course-review-count");
+    const courseReviewError = document.getElementById("course-review-error");
+    const courseReviewCancel = document.getElementById("course-review-cancel");
+    const courseReviewSubmit = document.getElementById("course-review-submit");
+
+    let reviewingBookingId = null;
+    let reviewPreviousFocus = null;
+
+    function closeCourseReviewModal() {
+        if (!courseReviewModal || courseReviewModal.hidden) return;
+
+        courseReviewModal.hidden = true;
+        reviewingBookingId = null;
+
+        if (reviewPreviousFocus?.isConnected) {
+            reviewPreviousFocus.focus();
+        }
+
+        reviewPreviousFocus = null;
+    }
+
+    function openCourseReviewModal(booking) {
+        if (!courseReviewModal || !booking) return;
+
+        reviewingBookingId = booking.id;
+        reviewPreviousFocus = document.activeElement;
+
+        const subjectLabels = {
+            math: "數學",
+            english: "英文",
+            chinese: "國文",
+            science: "自然",
+            social: "社會",
+            art: "美術",
+            music: "音樂",
+            other: "其他"
+        };
+
+        document.getElementById("course-review-subject").textContent =
+            `${subjectLabels[booking.subject] || booking.subject || "未提供"}家教課程`;
+
+        document.getElementById("course-review-teacher").textContent =
+            `老師：${booking.teacher_name || "未提供"}`;
+
+        document.getElementById("course-review-date").textContent =
+            `上課日期：${booking.booking_date || "未提供"}`;
+
+        courseReviewContent.value = "";
+        courseReviewCount.textContent = "0 / 200";
+        courseReviewError.textContent = "";
+        courseReviewError.hidden = true;
+
+        courseReviewModal.hidden = false;
+        courseReviewContent.focus();
+    }
+
+    // 即時字數計算
+    courseReviewContent.addEventListener("input", () => {
+        courseReviewCount.textContent =
+            `${courseReviewContent.value.length} / 200`;
+
+        courseReviewError.hidden = true;
+    });
+
+    // 取消
+    courseReviewCancel.addEventListener("click", closeCourseReviewModal);
+
+    // 點擊視窗外側關閉
+    courseReviewModal.addEventListener("click", event => {
+        if (event.target === courseReviewModal) {
+            closeCourseReviewModal();
+        }
+    });
+
+    // Escape 關閉、Tab 焦點限制
+    courseReviewModal.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+            event.preventDefault();
+            closeCourseReviewModal();
+            return;
+        }
+
+        if (event.key !== "Tab") return;
+
+        const focusable = [
+            courseReviewContent,
+            courseReviewCancel,
+            courseReviewSubmit
+        ];
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+        }
+    });
+
+    // 學生送出課後評價
+    courseReviewSubmit.addEventListener("click", async () => {
+        const content = courseReviewContent.value.trim();
+
+        if (content.length > 200) {
+            courseReviewError.textContent = "評價內容不能超過 200 字";
+            courseReviewError.hidden = false;
+            courseReviewContent.focus();
+            return;
+        }
+
+        courseReviewError.hidden = true;
+
+        if (!content) {
+            courseReviewError.textContent = "請先填寫課後評價";
+            courseReviewError.hidden = false;
+            courseReviewContent.focus();
+            return;
+        }
+
+        if (content.length > 200) {
+            courseReviewError.textContent = "評價內容不能超過 200 字";
+            courseReviewError.hidden = false;
+            return;
+        }
+
+        if (!reviewingBookingId) {
+            courseReviewError.textContent = "找不到課程資料";
+            courseReviewError.hidden = false;
+            return;
+        }
+
+        const token = sessionStorage.getItem("tutorlink_token");
+
+        if (!token) {
+            courseReviewError.textContent = "請先登入會員";
+            courseReviewError.hidden = false;
+            return;
+        }
+
+        courseReviewSubmit.disabled = true;
+        courseReviewSubmit.textContent = "送出中...";
+
+        try {
+            const response = await fetch("/api/reviews", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    booking_id: reviewingBookingId,
+                    content: content
+                })
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    typeof data.detail === "string"
+                        ? data.detail
+                        : "評價送出失敗，請稍後再試"
+                );
+            }
+
+            if (sessionStorage.getItem("tutorlink_token") !== token) {
+                closeCourseReviewModal();
+                return;
+            }
+
+            closeCourseReviewModal();
+
+            showCalendarToast("課後評價發表成功！", "success");
+
+        } catch (error) {
+            courseReviewError.textContent = error.message;
+            courseReviewError.hidden = false;
+
+        } finally {
+            courseReviewSubmit.disabled = false;
+            courseReviewSubmit.textContent = "送出評價";
+        }
+    });
+    // TutorLink｜課程頁面共用 Toast 通知
+    let calendarToastTimer = null;
+
+    function showCalendarToast(message, type = "info") {
+        let toast = document.getElementById("calendar-toast");
+
+        if (!toast) {
+            toast = document.createElement("div");
+            toast.id = "calendar-toast";
+            toast.className = "calendar-toast";
+            toast.setAttribute("role", "status");
+            toast.setAttribute("aria-live", "polite");
+            document.body.appendChild(toast);
+        }
+
+        // 清除上一次的計時器
+        if (calendarToastTimer) {
+            clearTimeout(calendarToastTimer);
+        }
+
+        const icons = {
+            success: "check-circle-2",
+            error: "circle-alert",
+            info: "info"
+        };
+
+        toast.className = `calendar-toast ${type}`;
+        toast.replaceChildren();
+
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", icons[type] || icons.info);
+
+        const text = document.createElement("span");
+        text.textContent = message;
+
+        toast.append(icon, text);
+
+        if (window.lucide) {
+            lucide.createIcons({ nodes: [toast] });
+        }
+
+        // 顯示通知
+        requestAnimationFrame(() => {
+            toast.classList.add("show");
+        });
+
+        // 3 秒後自動消失
+        calendarToastTimer = setTimeout(() => {
+            toast.classList.remove("show");
+        }, 3000);
+    }
+
+    // 我的課程｜課程紀錄清單
+    function renderCourseRecords() {
+        const recordsList = document.getElementById("calendar-records-list");
+        const recordsMonthTitle = document.getElementById("records-month-title");
+
+        if (!recordsList || !recordsMonthTitle) return;
+
+        // 更新課程紀錄月份標題
+        recordsMonthTitle.textContent =
+            `${recordsYear} 年 ${recordsMonth + 1} 月`;
+
+        recordsList.replaceChildren();
+
+        // 取得當月份已接受的預約
+        const monthlyRecords = myBookings
+            .filter(booking => {
+                if (booking.status !== "accepted") return false;
+
+                const [year, month] = booking.booking_date
+                    .split("-")
+                    .map(Number);
+
+                return (
+                    year === recordsYear &&
+                    month === recordsMonth + 1
+                );
+            })
+            .sort((a, b) => {
+                const dateA = `${a.booking_date}T${a.start_time}`;
+                const dateB = `${b.booking_date}T${b.start_time}`;
+
+                // 由舊到新：日期越早、時間越早，排在越前面
+                return dateA.localeCompare(dateB);
+            });
+
+        // 統一時間格式
+        function formatCourseTime(time) {
+            const match = String(time ?? "")
+                .trim()
+                .match(/^(\d{1,2}):(\d{1,2})(?::(\d{0,2}))?$/);
+
+            if (!match) return "--:--";
+
+            const hour = Number(match[1]);
+            const minute = Number(match[2]);
+
+            if (hour > 23 || minute > 59) return "--:--";
+
+            return `${String(hour).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+        }
+
+        // 判斷課程是否已過結束時間
+        function hasLessonEnded(booking) {
+            const date = String(booking.booking_date || "").slice(0, 10);
+            const time = formatCourseTime(booking.end_time);
+
+            if (!/^\d{4}-\d{2}-\d{2}$/.test(date) || time === "--:--") {
+                return false;
+            }
+
+            const [year, month, day] = date.split("-").map(Number);
+            const [hour, minute] = time.split(":").map(Number);
+
+            const endDateTime = new Date(
+                year,
+                month - 1,
+                day,
+                hour,
+                minute
+            );
+
+            return (
+                endDateTime.getFullYear() === year &&
+                endDateTime.getMonth() === month - 1 &&
+                endDateTime.getDate() === day &&
+                endDateTime <= new Date()
+            );
+        }
+
+        // 待確認完成：已上完課，但老師尚未確認
+        const pendingRecords = monthlyRecords.filter(booking => {
+            return hasLessonEnded(booking) && !booking.completed_at;
+        });
+
+        // 付款紀錄：所有已接受預約的課程，且尚未付款成功
+        // 不論課程是否已經上完，都要列入
+        const paymentRecords = monthlyRecords.filter(booking => {
+            return (
+                booking.status === "accepted" &&
+                booking.payment_status !== "paid"
+            );
+        });
+
+        // 已完成：課程已完成，而且付款成功
+        const completedRecords = monthlyRecords.filter(booking => {
+            return (
+                Boolean(booking.completed_at) &&
+                booking.payment_status === "paid"
+            );
+        });
+
+        // 更新分類數量
+        document.getElementById("records-pending-count").textContent =
+            pendingRecords.length;
+
+        document.getElementById("records-payments-count").textContent =
+            paymentRecords.length;
+
+        document.getElementById("records-completed-count").textContent =
+            completedRecords.length;
+
+        // 依目前選取的分類決定顯示內容
+        let records = monthlyRecords;
+
+        if (activeRecordFilter === "pending") {
+            records = pendingRecords;
+        } else if (activeRecordFilter === "payments") {
+            records = paymentRecords;
+        } else if (activeRecordFilter === "completed") {
+            records = completedRecords;
+        }
+
+        // 沒有課程紀錄
+        if (records.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "calendar-records-empty";
+            const emptyMessages = {
+                pending: "本月沒有待確認完成的課程",
+                payments: "本月沒有付款相關課程",
+                completed: "目前尚無可確認付款成功的已完成課程"
+            };
+
+            empty.textContent =
+                emptyMessages[activeRecordFilter] || "本月尚無課程紀錄";
+            recordsList.appendChild(empty);
+            return;
+        }
+
+        // 科目中文名稱
+        const subjectLabels = {
+            math: "數學",
+            english: "英文",
+            chinese: "國文",
+            science: "自然",
+            social: "社會",
+            art: "美術",
+            music: "音樂",
+            other: "其他"
+        };
+
+        records.forEach(booking => {
+            const isTeacher =
+                currentUserId !== null &&
+                Number(booking.student_id) !== Number(currentUserId);
+
+            const personName = isTeacher
+                ? booking.student_name
+                : booking.teacher_name;
+
+            const personLabel = isTeacher ? "學生" : "老師";
+
+            const isCompleted = Boolean(booking.completed_at);
+            const lessonEnded = hasLessonEnded(booking);
+
+            // 建立課程卡片
+            const card = document.createElement("article");
+            card.className = "calendar-record-card";
+
+            // 課程名稱
+            const title = document.createElement("h3");
+            title.className = "calendar-record-title";
+            title.textContent =
+                `${subjectLabels[booking.subject] || booking.subject || "未提供"}家教課程`;
+
+            // 判斷課程狀態
+            let lessonStatusText = "";
+            let lessonStatusClass = "";
+
+            if (isCompleted) {
+                lessonStatusText = "已上課";
+                lessonStatusClass = "completed";
+            } else if (lessonEnded) {
+                lessonStatusText = "待確認完成";
+                lessonStatusClass = "pending-completion";
+            } else {
+                lessonStatusText = "待上課";
+                lessonStatusClass = "upcoming";
+            }
+
+            // 建立狀態標籤
+            const status = document.createElement("span");
+            status.className =
+                `calendar-record-status ${lessonStatusClass}`;
+            status.textContent = lessonStatusText;
+
+            // 取得這堂課的實際付款狀態
+            const paymentStatusValue = booking.payment_status || "unpaid";
+
+            // 建立付款狀態標籤
+            const paymentStatusBadge = document.createElement("span");
+            paymentStatusBadge.className = "calendar-record-payment-status";
+
+
+            if (paymentStatusValue === "paid") {
+                // 正常付款成功
+                paymentStatusBadge.classList.add("paid");
+                paymentStatusBadge.textContent = isTeacher ? "已收款" : "已付款";
+
+            } else if (paymentStatusValue === "refund_required") {
+                // 異常付款：需要人工核對或退款
+                paymentStatusBadge.classList.add("pending");
+                paymentStatusBadge.textContent = "付款異常";
+
+            } else {
+                // 尚未付款成功
+                paymentStatusBadge.classList.add("pending");
+                paymentStatusBadge.textContent = isTeacher ? "待收款" : "待付款";
+            }
+
+            // 將上課狀態與付款狀態放在同一區
+            const statusGroup = document.createElement("div");
+            statusGroup.className = "calendar-record-status-group";
+
+            statusGroup.append(status, paymentStatusBadge);
+
+            // 卡片標題區
+            const header = document.createElement("div");
+            header.className = "calendar-record-header";
+            header.append(title, statusGroup);
+
+            const info = document.createElement("div");
+            info.className = "calendar-record-info";
+
+            const fields = [
+                `${personLabel}：${personName || "未提供"}`,
+                `上課日期：${booking.booking_date || "未提供"}`,
+                `上課時間：${formatCourseTime(booking.start_time)}－${formatCourseTime(booking.end_time)}`,
+                `課程長度：${booking.duration_minutes} 分鐘`,
+                `課程金額：NT$ ${Number(booking.total_amount || 0).toLocaleString("en-US")}`
+            ];
+
+            fields.forEach(value => {
+                const row = document.createElement("p");
+                row.textContent = value;
+                info.appendChild(row);
+            });
+
+            card.append(header, info);
+
+            // 課程卡片共用操作按鈕區域
+            const recordActions = document.createElement("div");
+            recordActions.className = "calendar-record-actions";
+
+            // 學生專屬｜立即付款按鈕
+            // 判斷目前登入會員是否為這堂課的學生
+            const isStudent =
+                currentUserId !== null &&
+                Number(booking.student_id) === Number(currentUserId);
+
+            // 學生專屬：依照實際付款狀態顯示按鈕
+            const paymentStatus = paymentStatusValue;
+
+            // 只有學生本人、老師已接受預約，
+            // 且沒有正常付款成功或異常付款紀錄時，才顯示付款按鈕
+            const canShowPayment =
+                isStudent &&
+                booking.status === "accepted" &&
+                paymentStatus !== "paid" &&
+                paymentStatus !== "refund_required";
+
+            if (canShowPayment) {
+                const payButton = document.createElement("button");
+
+                payButton.type = "button";
+                payButton.className = "calendar-record-pay-button";
+
+                payButton.textContent = "立即付款";
+
+                recordActions.appendChild(payButton);
+
+                // 只有尚未付款成功，才綁定付款事件
+                if (paymentStatus !== "paid") {
+
+                    // 學生專屬｜綠界付款
+                    payButton.addEventListener("click", async () => {
+                    const token = sessionStorage.getItem("tutorlink_token");
+
+                    if (!token) {
+                        showCalendarToast("請先登入會員", "error");
+                        return;
+                    }
+
+                    // 防止重複點擊
+                    payButton.disabled = true;
+                    payButton.textContent = "正在前往付款頁面...";
+
+                    try {
+                        // 1. 呼叫後端建立付款訂單
+                        const response = await fetch("/api/payments/create", {
+                            method: "POST",
+                            headers: {
+                                "Authorization": `Bearer ${token}`,
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                booking_id: booking.id
+                            })
+                        });
+
+                        let data = await response.json();
+
+                        if (!response.ok) {
+                            const detail = data.detail;
+
+                            if (
+                                response.status === 409 &&
+                                ["PAYMENT_PENDING", "PAYMENT_RETRY_REQUIRED"].includes(detail?.code) &&
+                                Number.isInteger(detail.payment_id) &&
+                                detail.payment_id > 0
+                            ) {
+                                // 已有 pending 訂單，向後端確認能否繼續付款
+                                const checkoutResponse = await fetch(
+                                    `/api/payments/${detail.payment_id}/checkout`,
+                                    {
+                                        method: "GET",
+                                        headers: {
+                                            "Authorization": `Bearer ${token}`
+                                        }
+                                    }
+                                );
+
+                                data = await checkoutResponse.json();
+
+                                if (!checkoutResponse.ok) {
+                                    throw new Error(
+                                        typeof data.detail === "string"
+                                            ? data.detail
+                                            : "目前無法繼續付款，請稍後再試"
+                                    );
+                                }
+
+                            } else {
+                                throw new Error(
+                                    typeof detail === "string"
+                                        ? detail
+                                        : detail?.message || "建立付款訂單失敗"
+                                );
+                            }
+                        }
+
+                        // 避免登入身分在請求期間改變
+                        if (sessionStorage.getItem("tutorlink_token") !== token) {
+                            throw new Error("登入狀態已變更，請重新操作");
+                        }
+
+                        // 2. 檢查後端回傳的付款資料
+                        if (!data.payment_url || !data.ecpay_params) {
+                            throw new Error("付款資料不完整，請稍後再試");
+                        }
+
+                        const paymentUrl = new URL(data.payment_url);
+
+                        // 限制只能跳轉到綠界 Sandbox
+                        if (
+                            paymentUrl.protocol !== "https:" ||
+                            paymentUrl.hostname !== "payment-stage.ecpay.com.tw"
+                        ) {
+                            throw new Error("付款網址不正確，已取消跳轉");
+                        }
+
+                        // 3. 建立 POST 表單
+                        const form = document.createElement("form");
+                        form.method = "POST";
+                        form.action = paymentUrl.href;
+                        form.style.display = "none";
+
+                        // 4. 將綠界付款參數加入表單
+                        Object.entries(data.ecpay_params).forEach(([key, value]) => {
+                            const input = document.createElement("input");
+
+                            input.type = "hidden";
+                            input.name = key;
+                            input.value = String(value);
+
+                            form.appendChild(input);
+                        });
+
+                        // 5. 加入頁面並送往綠界
+                        document.body.appendChild(form);
+
+                        showCalendarToast("正在前往綠界測試付款頁面...", "info");
+
+                        form.submit();
+
+                    } catch (error) {
+                        console.error("建立綠界付款失敗：", error);
+
+                        showCalendarToast(
+                            error.message || "無法前往付款頁面，請稍後再試",
+                            "error"
+                        );
+
+                        payButton.disabled = false;
+
+                        payButton.textContent = "立即付款";
+                    }
+                });
+            }
+        }
+
+            // 只有這筆課程的老師，且課程已結束、尚未確認完成，才顯示按鈕
+            const canCompleteLesson =
+                isTeacher &&
+                booking.status === "accepted" &&
+                hasLessonEnded(booking) &&
+                !booking.completed_at;
+
+            if (canCompleteLesson) {
+                const actions = document.createElement("div");
+                actions.className = "calendar-record-actions";
+
+                const completeButton = document.createElement("button");
+                completeButton.type = "button";
+                completeButton.className = "calendar-record-complete-button";
+                completeButton.textContent = "確認課程完成";
+
+                actions.appendChild(completeButton);
+                card.appendChild(actions);
+
+                completeButton.addEventListener("click", async () => {
+                    const confirmed = await confirmLessonCompletion();
+
+                    if (!confirmed) return;
+
+                    const token = sessionStorage.getItem("tutorlink_token");
+
+                    if (!token) {
+                        alert("請先登入會員");
+                        return;
+                    }
+
+                    completeButton.disabled = true;
+                    completeButton.textContent = "處理中...";
+
+                    try {
+                        const response = await fetch(
+                            `/api/bookings/${booking.id}/complete`,
+                            {
+                                method: "PATCH",
+                                headers: {
+                                    "Authorization": `Bearer ${token}`
+                                }
+                            }
+                        );
+
+                        const data = await response.json();
+
+                        if (!response.ok) {
+                            throw new Error(
+                                typeof data.detail === "string"
+                                    ? data.detail
+                                    : "確認課程完成失敗"
+                            );
+                        }
+
+                        // 避免帳號已切換時重新載入舊帳號資料
+                        if (sessionStorage.getItem("tutorlink_token") !== token) {
+                            return;
+                        }
+
+                        // 重新取得預約資料，更新狀態及分類數量
+                        await loadMyBookings();
+
+                    } catch (error) {
+                        console.error("確認課程完成失敗：", error);
+
+                        alert(error.message || "操作失敗，請稍後再試");
+
+                        completeButton.disabled = false;
+                        completeButton.textContent = "確認課程完成";
+                    }
+                });
+            }
+
+            // 有操作按鈕時才加入卡片
+            if (recordActions.children.length > 0) {
+                card.appendChild(recordActions);
+            }
+
+            recordsList.appendChild(card);
+        });
     }
 
     // 更新右側當日課程清單
@@ -806,6 +1656,66 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
+    // 課程紀錄｜分類卡片切換
+    const recordFilterButtons = document.querySelectorAll(
+        ".calendar-record-filter"
+    );
+
+    recordFilterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const selectedFilter = button.dataset.recordFilter;
+
+            // 再次點擊同一張卡片，取消篩選
+            activeRecordFilter =
+                activeRecordFilter === selectedFilter
+                    ? null
+                    : selectedFilter;
+
+            // 更新選取狀態
+            recordFilterButtons.forEach(item => {
+                const isActive =
+                    item.dataset.recordFilter === activeRecordFilter;
+
+                item.classList.toggle("active", isActive);
+                item.setAttribute("aria-pressed", String(isActive));
+            });
+
+            // 重新顯示課程紀錄
+            renderCourseRecords();
+        });
+    });
+
+    // 課程紀錄｜月份切換
+    const recordsPrevMonthBtn =
+        document.getElementById("records-prev-month");
+
+    const recordsNextMonthBtn =
+        document.getElementById("records-next-month");
+
+    // 上個月
+    recordsPrevMonthBtn.addEventListener("click", () => {
+        recordsMonth--;
+
+        if (recordsMonth < 0) {
+            recordsMonth = 11;
+            recordsYear--;
+        }
+
+        renderCourseRecords();
+    });
+
+    // 下個月
+    recordsNextMonthBtn.addEventListener("click", () => {
+        recordsMonth++;
+
+        if (recordsMonth > 11) {
+            recordsMonth = 0;
+            recordsYear++;
+        }
+
+        renderCourseRecords();
+    });
+
     // 上個月
     prevMonthBtn.addEventListener("click", () => {
 
@@ -846,7 +1756,10 @@ document.addEventListener("DOMContentLoaded", () => {
         currentUserId = null;
 
         document.body.classList.remove("calendar-auth-checking");
-        document.body.classList.add("calendar-login-required");
+        document.body.classList.add(
+            "calendar-login-required",
+            "member-login-required"
+        );
 
         // 避免重複建立
         if (document.getElementById("calendar-login-notice")) {
@@ -855,11 +1768,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const notice = document.createElement("div");
         notice.id = "calendar-login-notice";
-        notice.className = "calendar-login-notice";
+        notice.className = "calendar-login-notice member-login-screen";
 
         notice.innerHTML = `
-            <div class="calendar-login-card">
-                <div class="calendar-login-icon">
+            <div class="calendar-login-card member-login-card">
+                <div class="calendar-login-icon member-login-icon">
                     <i data-lucide="lock-keyhole"></i>
                 </div>
 
@@ -892,7 +1805,8 @@ document.addEventListener("DOMContentLoaded", () => {
     function showCalendarPage() {
         document.body.classList.remove(
             "calendar-auth-checking",
-            "calendar-login-required"
+            "calendar-login-required",
+            "member-login-required"
         );
 
         document.getElementById("calendar-login-notice")?.remove();
@@ -957,6 +1871,7 @@ document.addEventListener("DOMContentLoaded", () => {
             renderCalendar();
             resetDayBookings();
             updateBookingStats();
+            renderCourseRecords();
             loadMyBookings();
         }
     });
@@ -968,6 +1883,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderCalendar();
         resetDayBookings();
         updateBookingStats();
+        renderCourseRecords();
 
         showCalendarLoginRequired();
     });
@@ -984,3 +1900,53 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })();
 });
+
+// ==============================
+// 進入我的課程頁面後標記課程提醒已讀
+// ==============================
+async function markCourseNotificationsAsRead() {
+    const token = sessionStorage.getItem("tutorlink_token");
+
+    if (!token) return;
+
+    try {
+        const response = await fetch(
+            "/api/course-notifications/read",
+            {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(
+                `標記課程提醒已讀失敗：${response.status}`
+            );
+        }
+
+        // 防止帳號切換時更新錯誤的會員畫面
+        if (sessionStorage.getItem("tutorlink_token") !== token) {
+            return;
+        }
+
+        // 同步更新 Header 紅點
+        if (typeof updateCourseNotificationDots === "function") {
+            await updateCourseNotificationDots();
+        }
+
+    } catch (error) {
+        console.error("課程提醒已讀更新失敗：", error);
+    }
+}
+
+// 進入行事曆頁面時標記已讀
+if (document.readyState === "loading") {
+    document.addEventListener(
+        "DOMContentLoaded",
+        markCourseNotificationsAsRead
+    );
+} else {
+    markCourseNotificationsAsRead();
+}

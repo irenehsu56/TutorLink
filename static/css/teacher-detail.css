@@ -700,16 +700,11 @@
     border-color: var(--primary);
 }
 
-
-/* ========================================
-   上課日期下拉選單
-======================================== */
-
+/* 課日期下拉選單 */
 .booking-date-picker {
     position: relative;
     width: 100%;
 }
-
 /* 日期選擇按鈕 */
 .booking-date-trigger {
     display: flex;
@@ -731,22 +726,18 @@
     cursor: pointer;
     transition: border-color 0.2s ease;
 }
-
 .booking-date-trigger:hover,
 .booking-date-trigger[aria-expanded="true"] {
     border-color: var(--primary);
 }
-
 .booking-date-trigger:focus-visible {
     outline: 2px solid var(--primary);
     outline-offset: 2px;
 }
-
 /* 已選擇日期 */
 .booking-date-trigger.has-value {
     color: var(--text-dark);
 }
-
 .booking-date-trigger svg {
     flex-shrink: 0;
     width: 19px;
@@ -925,6 +916,310 @@
     background: var(--primary-dark);
 }
 
+/* 學生課後評價：展開式表單 */
+/* 隱藏尚未展開的評價表單 */
+.detail-review-editor[hidden] {
+    display: none;
+}
+/* 評價表單容器 */
+.detail-review-editor {
+    margin: 20px 0 24px;
+    padding: 24px;
+    background: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+}
+/* 表單標題與關閉按鈕 */
+.detail-review-editor-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+.detail-review-editor-header h3 {
+    color: var(--text-dark);
+    font-size: 18px;
+    font-weight: 700;
+}
+#detail-review-modal-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: transparent;
+    color: var(--text-gray);
+    border: none;
+    border-radius: 50%;
+}
+#detail-review-modal-close:hover {
+    background: var(--border);
+    color: var(--primary);
+}
+#detail-review-modal-close svg {
+    width: 20px;
+    height: 20px;
+}
+/* 評價輸入欄位 */
+#detail-review-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+#detail-review-form label {
+    color: var(--text-dark);
+    font-size: 15px;
+    font-weight: 600;
+}
+#detail-review-content {
+    width: 100%;
+    min-height: 140px;
+    padding: 14px;
+    background: var(--white);
+    color: var(--text-dark);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    font: inherit;
+    line-height: 1.7;
+    resize: vertical;
+}
+#detail-review-content:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+.detail-review-editor .course-review-character-count {
+    color: var(--text-gray);
+    font-size: 13px;
+    text-align: right;
+}
+#detail-review-error {
+    color: #d93025;
+    font-size: 13px;
+}
+#detail-review-error[hidden] {
+    display: none;
+}
+/* 撰寫評價、編輯評價按鈕 */
+.detail-review-edit-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 9px 18px;
+    background: var(--primary);
+    color: var(--white);
+    border: 1px solid var(--primary);
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+.detail-review-edit-button:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+}
+.detail-review-edit-button svg {
+    width: 17px;
+    height: 17px;
+}
+/* 尚未評價：提示文字與撰寫按鈕 */
+.detail-review-write-area {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+.detail-review-write-area p {
+    align-self: stretch;
+    margin-bottom: 0;
+    color: var(--text-dark);
+    line-height: 1.7;
+}
+/* 取消、送出評價、儲存修改按鈕 */
+.detail-review-editor .course-review-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+#detail-review-cancel,
+#detail-review-submit {
+    min-height: 42px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-size: 14px;
+    font-weight: 600;
+}
+#detail-review-cancel {
+    background: var(--white);
+    color: var(--text-gray);
+    border: 1px solid var(--border);
+}
+#detail-review-cancel:hover {
+    background: var(--border);
+}
+#detail-review-submit {
+    background: var(--primary);
+    color: var(--white);
+    border: 1px solid var(--primary);
+}
+#detail-review-submit:hover:not(:disabled) {
+    background: var(--primary-dark);
+}
+#detail-review-submit:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+/* 已評價：編輯按鈕靠右 */
+.detail-review-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+/* 編輯模式縮小輸入區域 */
+.detail-review-item #detail-review-content {
+    min-height: 90px;
+    height: 100px;
+}
+/* 編輯時隱藏原留言及編輯按鈕 */
+.detail-review-content-display[hidden],
+.detail-review-actions[hidden],
+.detail-review-editor-header[hidden] {
+    display: none;
+}
+/* 原留言位置直接編輯，不另外產生大區塊 */
+.detail-review-item .detail-review-editor {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+/* 老師回覆框內直接編輯 */
+.detail-review-reply .detail-review-editor {
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+}
+.detail-review-reply #detail-review-content {
+    min-height: 90px;
+    height: 100px;
+}
+/* 編輯時隱藏原本的老師回覆文字 */
+.detail-review-reply-content[hidden] {
+    display: none;
+}
+/* 學生評價與老師回覆分開顯示 */
+.detail-review-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+/* 老師回覆按鈕靠右 */
+.detail-review-group > .detail-review-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0;
+}
+
+/* 學生課後評價 */
+/* 評價數量 */
+.detail-reviews-count {
+    margin: 0 0 24px;
+    color: var(--text-gray);
+    font-size: 14px;
+}
+/* 評價清單 */
+.detail-reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+/* 單筆評價卡片 */
+.detail-review-item {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    background: var(--white);
+}
+/* 學生名稱與日期 */
+.detail-review-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 16px;
+}
+.detail-review-name {
+    color: var(--text-dark);
+    font-size: 16px;
+    font-weight: 700;
+}
+.detail-review-date {
+    color: var(--text-gray);
+    font-size: 13px;
+}
+/* 學生評價內容 */
+.detail-review-content {
+    color: var(--text-dark);
+    font-size: 15px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+/* 老師回覆：比學生評價框稍小，向右縮排 */
+.detail-review-reply {
+    width: calc(100% - 36px);
+    margin-top: 0;
+    margin-left: auto;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--background);
+    position: relative;
+}
+/* 老師回覆左側：小型淺灰色圓角箭頭 */
+.detail-review-reply::before {
+    content: "↳";
+    position: absolute;
+    top: 12px;
+    left: -32px;
+    color: #b5b5b5;
+    font-size: 23px;
+    font-weight: 400;
+    line-height: 1;
+}
+.detail-review-reply-title {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--primary);
+    font-size: 14px;
+    font-weight: 700;
+}
+.detail-review-reply-content {
+    color: var(--text-dark);
+    font-size: 14px;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+/* 尚無評價與載入失敗提示 */
+.detail-reviews-empty,
+.detail-reviews-error {
+    padding: 24px 12px;
+    color: var(--text-gray);
+    font-size: 14px;
+    text-align: center;
+}
+.detail-reviews-error {
+    color: #d64545;
+}
+
 /* RWD：平板 */
 @media (max-width: 1100px) {
     .teacher-detail-page {
@@ -945,6 +1240,27 @@
     }
     .detail-teaching-grid {
         gap: 20px;
+    }
+}
+
+/* RWD：手機 */
+@media (max-width: 800px) {
+    .detail-reviews-count {
+        margin-bottom: 16px;
+    }
+    .detail-reviews-list {
+        gap: 12px;
+    }
+    .detail-review-item {
+        padding: 16px;
+        border-radius: 12px;
+    }
+    .detail-review-header {
+        margin-bottom: 12px;
+    }
+    .detail-review-reply {
+        margin-top: 16px;
+        padding: 14px 16px;
     }
 }
 

@@ -460,9 +460,108 @@ function showAuthToast(title, message) {
 }
 
 // ==============================
+// 課程未讀提醒紅點
+// ==============================
+let courseNotificationRequestId = 0;
+
+// 更新課程與評價通知紅點
+async function updateCourseNotificationDots() {
+    const requestId = ++courseNotificationRequestId;
+
+    const memberDot = document.getElementById(
+        "member-notification-dot"
+    );
+
+    const calendarDot = document.getElementById(
+        "member-calendar-dot"
+    );
+
+    const reviewDot = document.getElementById(
+        "member-review-notification-dot"
+    );
+
+    const token = sessionStorage.getItem("tutorlink_token");
+
+    // 先清除舊帳號的通知狀態
+    if (memberDot) memberDot.hidden = true;
+    if (calendarDot) calendarDot.hidden = true;
+    if (reviewDot) reviewDot.hidden = true;
+
+    if (!token) return;
+
+    try {
+        // 同時取得課程與評價的未讀狀態
+        const [courseResponse, reviewResponse] = await Promise.all([
+            fetch("/api/course-notifications/unread", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                cache: "no-store"
+            }),
+            fetch("/api/review-notifications/unread", {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                },
+                cache: "no-store"
+            })
+        ]);
+
+        if (!courseResponse.ok || !reviewResponse.ok) {
+            throw new Error(
+                `通知查詢失敗：課程 ${courseResponse.status}，評價 ${reviewResponse.status}`
+            );
+        }
+
+        const [courseData, reviewData] = await Promise.all([
+            courseResponse.json(),
+            reviewResponse.json()
+        ]);
+
+        // 避免舊請求覆蓋新帳號狀態
+        if (
+            sessionStorage.getItem("tutorlink_token") !== token ||
+            requestId !== courseNotificationRequestId
+        ) {
+            return;
+        }
+
+        const hasCourseUnread = courseData.has_unread === true;
+        const hasReviewUnread = reviewData.has_unread === true;
+
+        // 課程紅點只受課程通知影響
+        if (calendarDot) {
+            calendarDot.hidden = !hasCourseUnread;
+        }
+
+        // 通知中心紅點只受評價通知影響
+        if (reviewDot) {
+            reviewDot.hidden = !hasReviewUnread;
+        }
+
+        // 會員按鈕：任一類未讀就顯示
+        if (memberDot) {
+            memberDot.hidden = !(hasCourseUnread || hasReviewUnread);
+        }
+
+    } catch (error) {
+        if (
+            sessionStorage.getItem("tutorlink_token") !== token ||
+            requestId !== courseNotificationRequestId
+        ) {
+            return;
+        }
+
+        console.error("更新通知紅點失敗：", error);
+
+        if (memberDot) memberDot.hidden = true;
+        if (calendarDot) calendarDot.hidden = true;
+        if (reviewDot) reviewDot.hidden = true;
+    }
+}
+
+// ==============================
 // Member 會員登入狀態管理
 // ==============================
-
 // 取得 Header 會員相關元素
 const memberMenu = document.getElementById("member-menu");
 const memberTrigger = document.getElementById("member-trigger");
@@ -470,8 +569,55 @@ const memberName = document.getElementById("member-name");
 const memberDropdown = document.getElementById("member-dropdown");
 const memberLogout = document.getElementById("member-logout");
 
+// Header 會員頭貼
+const memberAvatar = document.getElementById("member-avatar");
+
 // Header：成為家教／我的家教資料
 const navTeacherLink = document.getElementById("nav-teacher-link");
+
+// ==============================
+// 更新 Header 會員頭貼
+// ==============================
+function updateMemberAvatar(photoUrl = null) {
+
+    if (!memberAvatar) return;
+
+    // 清除舊會員的頭貼或圖示
+    memberAvatar.replaceChildren();
+
+    // 沒有頭貼時顯示預設會員圖示
+    function showDefaultAvatar() {
+        memberAvatar.replaceChildren();
+
+        const icon = document.createElement("i");
+        icon.setAttribute("data-lucide", "circle-user-round");
+
+        memberAvatar.appendChild(icon);
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+
+    if (!photoUrl) {
+        showDefaultAvatar();
+        return;
+    }
+
+    // 建立會員頭貼圖片
+    const image = document.createElement("img");
+    image.alt = "會員頭貼";
+
+    // 圖片失效時恢復預設圖示
+    image.onerror = () => {
+        if (memberAvatar.contains(image)) {
+            showDefaultAvatar();
+        }
+    };
+
+    image.src = photoUrl;
+    memberAvatar.appendChild(image);
+}
 
 // ==============================
 // 更新 Header 會員畫面
@@ -515,15 +661,24 @@ function updateMemberUI(user = null) {
     // 更新 Header 未讀訊息數量
     updateUnreadMessageCount();
 
+    // 更新會員課程提醒紅點
+    updateCourseNotificationDots();
+
     if (isLoggedIn) {
 
         // 顯示後端回傳的會員名稱
         memberName.textContent = user.name;
 
+        // 顯示目前登入會員的頭貼
+        updateMemberAvatar(user.photo_url || null);
+
     } else {
 
         // 登出後恢復預設狀態
         memberName.textContent = "會員名稱";
+
+        // 清除上一位會員的頭貼
+        updateMemberAvatar();
 
     }
 
@@ -626,6 +781,10 @@ function closeMemberDropdown() {
 // ==============================
 // 取得目前登入的會員資料
 // ==============================
+window.addEventListener("tutorlink:profile-updated", () => {
+    loadCurrentUser();
+});
+
 async function loadCurrentUser() {
 
     // 從 sessionStorage 取得 JWT
@@ -749,7 +908,6 @@ memberLogout.addEventListener("click", () => {
 // ==============================
 // Delete Account Modal 刪除帳號確認視窗
 // ==============================
-
 // 取得相關元素
 const memberDelete = document.getElementById("member-delete");
 const deleteAccountModal = document.getElementById("delete-account-modal");

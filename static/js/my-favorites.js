@@ -170,13 +170,19 @@ async function loadMyFavorites() {
     if (!token) {
         favoritesLoading.hidden = true;
         favoritesLoginRequired.hidden = false;
-        document.body.classList.add("favorites-login-required");
+        document.body.classList.add(
+            "favorites-login-required",
+            "member-login-required"
+        );
         return;
     }
 
     // 已登入時隱藏登入提示卡片
     favoritesLoginRequired.hidden = true;
-    document.body.classList.remove("favorites-login-required");
+    document.body.classList.remove(
+        "favorites-login-required",
+        "member-login-required"
+    );
 
     // 顯示載入中提示
     favoritesLoading.textContent = "正在載入收藏老師...";

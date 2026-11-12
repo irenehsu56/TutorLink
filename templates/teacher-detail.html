@@ -75,7 +75,7 @@
                     <span id="detail-experience">
                         <i data-lucide="award"></i>
                     </span>
-                    
+
                     <span id="detail-hourly-rate">
                         <i data-lucide="coins"></i>
                     </span>
@@ -260,6 +260,75 @@
 
         </section>
 
+        <!-- 學生課後評價 -->
+        <section class="detail-card" id="detail-reviews-section" tabindex="-1">
+
+            <h2 class="detail-section-title">
+                <i data-lucide="message-square-text"></i>
+                學生課後評價
+            </h2>
+
+            <!-- 評價數量 -->
+            <p class="detail-reviews-count" id="detail-reviews-count">
+                載入評價中...
+            </p>
+
+            <!-- 學生課後評價：展開式撰寫／編輯表單 -->
+            <div class="detail-review-editor" id="detail-review-modal" hidden>
+
+                <form id="detail-review-form">
+
+                    <div class="detail-review-editor-header">
+                        <h3 id="detail-review-modal-title">撰寫評價</h3>
+
+                        <button
+                            type="button"
+                            id="detail-review-modal-close"
+                            aria-label="關閉評價表單"
+                        >
+                            <i data-lucide="x"></i>
+                        </button>
+                    </div>
+
+                    <label for="detail-review-content">
+                        分享你的上課心得
+                    </label>
+
+                    <textarea
+                        id="detail-review-content"
+                        maxlength="200"
+                        rows="5"
+                        placeholder="請分享這位老師的教學方式、上課心得..."
+                        required
+                    ></textarea>
+
+                    <p class="course-review-character-count">
+                        <span id="detail-review-character-count">0</span>
+                        / 200 字
+                    </p>
+
+                    <p id="detail-review-error" hidden></p>
+
+                    <div class="course-review-modal-actions">
+                        <button type="button" id="detail-review-cancel">
+                            取消
+                        </button>
+
+                        <button type="submit" id="detail-review-submit">
+                            送出評價
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- 學生評價清單 -->
+            <div class="detail-reviews-list" id="detail-reviews-list">
+                <p>正在載入學生評價...</p>
+            </div>
+
+        </section>
+
     </main>
 
     <!-- 刪除老師資料確認視窗 -->
@@ -316,7 +385,7 @@
         </div>
     </div>
 
-    <!-- utorLink｜預約家教課程視窗 -->
+    <!-- TutorLink｜預約家教課程視窗 -->
     <div
         class="booking-modal"
         id="booking-modal"

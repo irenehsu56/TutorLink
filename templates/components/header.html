@@ -23,12 +23,12 @@
             >
                 成為家教
             </a>
-            
+
             <a href="/#about">關於我們</a>
         </div>
 
         <div class="nav-actions">
-        
+
             <!-- 會員登入後顯示的私訊入口 -->
             <a
                 href="/messages.html"
@@ -67,9 +67,19 @@
                     aria-expanded="false"
                     aria-controls="member-dropdown"
                 >
-                    <i data-lucide="circle-user-round"></i>
+                    <!-- 會員頭貼：預設顯示會員圖示 -->
+                    <span class="member-avatar" id="member-avatar">
+                        <i data-lucide="circle-user-round"></i>
+                    </span>
 
                     <span id="member-name">會員名稱</span>
+
+                    <span
+                        id="member-notification-dot"
+                        class="member-notification-dot"
+                        aria-label="有未讀通知"
+                        hidden
+                    ></span>
 
                     <i data-lucide="chevron-down"></i>
                 </button>
@@ -77,15 +87,11 @@
                 <!-- 會員下拉選單 -->
                 <div class="member-dropdown" id="member-dropdown" hidden>
 
-                    <!-- 個人資料（功能尚未開發） -->
-                    <button
-                        type="button"
-                        class="member-profile"
-                        disabled
-                    >
+                    <!-- 個人資料 -->
+                    <a href="/profile.html" class="member-profile">
                         <i data-lucide="user-round"></i>
                         個人資料
-                    </button>
+                    </a>
 
                     <!-- 我的收藏老師 -->
                     <a href="/my-favorites.html" class="member-favorites">
@@ -93,10 +99,34 @@
                         我的收藏老師
                     </a>
 
-                    <!-- 個人行事曆 -->
+                    <!-- 我的課程／個人行事曆 -->
                     <a href="/calendar.html" class="member-calendar">
                         <i data-lucide="calendar-days"></i>
-                        個人行事曆
+                        <span>我的課程／個人行事曆</span>
+
+                        <span
+                            id="member-calendar-dot"
+                            class="member-calendar-dot"
+                            aria-label="有未讀課程提醒"
+                            hidden
+                        ></span>
+                    </a>
+
+                    <!-- 評價通知中心 -->
+                    <a
+                        href="/notifications.html"
+                        class="member-review-notifications"
+                    >
+                        <i data-lucide="bell"></i>
+
+                        <span>通知中心</span>
+
+                        <span
+                            id="member-review-notification-dot"
+                            class="member-calendar-dot"
+                            aria-label="有未讀評價通知"
+                            hidden
+                        ></span>
                     </a>
 
                     <!-- 登出帳號 -->

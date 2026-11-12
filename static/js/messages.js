@@ -6,6 +6,9 @@ if (window.lucide) {lucide.createIcons();}
 // 取得對話列表容器
 const conversationsList = document.getElementById("conversations-list");
 
+// 未登入提示區域
+const messagesLoginRequired = document.getElementById("messages-login-required");
+
 // 取得聊天主要版型與返回按鈕
 const messagesLayout = document.querySelector(".messages-layout");
 const chatBackButton = document.getElementById("chat-back-button");
@@ -21,6 +24,28 @@ let chatMessagesRequestId = 0;
 
 // 記錄對話列表請求版本，避免舊請求覆蓋新結果
 let conversationsRequestId = 0;
+
+// ==============================
+// 切換聊天室登入狀態
+// ==============================
+function updateMessagesLoginState(isLoggedIn) {
+
+    // 已登入：顯示聊天室，隱藏登入提示
+    // 未登入：隱藏聊天室，顯示登入提示
+    messagesLoginRequired.hidden = isLoggedIn;
+    messagesLayout.hidden = !isLoggedIn;
+
+    // 與其他會員專屬頁面保持相同樣式
+    document.body.classList.toggle(
+        "member-login-required",
+        !isLoggedIn
+    );
+
+    // 重新初始化提示卡圖示
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
 
 // ==============================
 // 清除目前會員的聊天畫面
@@ -154,18 +179,22 @@ async function loadConversations() {
 
     const token = sessionStorage.getItem("tutorlink_token");
 
-    // 未登入會員
+    // 未登入會員：顯示共用登入提示卡
     if (!token) {
-        conversationsList.replaceChildren();
 
-        const loginMessage = document.createElement("p");
-        loginMessage.className = "messages-placeholder";
-        loginMessage.textContent = "請先登入會員，才能查看訊息。";
+        // 清除上一位會員的聊天資料
+        clearMessagesPage();
 
-        conversationsList.appendChild(loginMessage);
+        // 隱藏聊天室，顯示登入提示
+        updateMessagesLoginState(false);
+
         return;
     }
 
+    // 已登入會員：顯示聊天室
+    updateMessagesLoginState(true);
+
+    // 載入目前會員的對話
     conversationsList.textContent = "載入對話中...";
 
     try {
@@ -215,6 +244,43 @@ async function loadConversations() {
             // 記錄聊天對象的會員 ID
             item.dataset.partnerId = conversation.other_user_id;
 
+            // 聊天對象頭貼容器
+            const partnerAvatar = document.createElement("span");
+            partnerAvatar.className = "conversation-avatar";
+
+            // 沒有頭貼時，顯示預設會員圖示
+            function showDefaultPartnerAvatar() {
+                partnerAvatar.replaceChildren();
+
+                const icon = document.createElement("i");
+                icon.setAttribute("data-lucide", "user-round");
+                partnerAvatar.appendChild(icon);
+            }
+
+            // 後端有回傳頭貼網址時，顯示對方照片
+            if (conversation.other_user_photo_url) {
+
+                const image = document.createElement("img");
+                image.alt = `${conversation.other_user_name}的頭貼`;
+
+                // 圖片載入失敗時恢復預設圖示
+                image.onerror = () => {
+                    if (partnerAvatar.contains(image)) {
+                        showDefaultPartnerAvatar();
+
+                        if (window.lucide) {
+                            lucide.createIcons();
+                        }
+                    }
+                };
+
+                image.src = conversation.other_user_photo_url;
+                partnerAvatar.appendChild(image);
+
+            } else {
+                showDefaultPartnerAvatar();
+            }
+
             // 聊天對象名稱
             const name = document.createElement("strong");
             name.className = "conversation-name";
@@ -258,8 +324,16 @@ async function loadConversations() {
                 item.appendChild(badge);
             }
 
-            item.appendChild(name);
-            item.appendChild(messageRow);
+            // 將姓名與最後訊息放在頭貼右側
+            const conversationBody = document.createElement("div");
+            conversationBody.className = "conversation-body";
+
+            conversationBody.appendChild(name);
+            conversationBody.appendChild(messageRow);
+
+            // 對話卡片：左側頭貼、右側文字
+            item.appendChild(partnerAvatar);
+            item.appendChild(conversationBody);
 
             // 點擊對話後，載入右側聊天紀錄
             item.addEventListener("click", () => {
@@ -295,9 +369,11 @@ async function loadConversations() {
 
             });
 
-
             conversationsList.appendChild(item);
         });
+
+        // 將動態建立的預設會員圖示轉換成 Lucide SVG
+        if (window.lucide) {lucide.createIcons();}
 
         // 從網址取得指定的對話 ID
         const urlParams = new URLSearchParams(window.location.search);

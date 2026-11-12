@@ -107,40 +107,54 @@ let ownershipRequestId = 0;
 // ==============================
 function showTeacherLoginNotice() {
 
-    document.body.classList.add("teacher-login-required");
+    // 使用全站共用的未登入頁面樣式
+    document.body.classList.add("member-login-required");
+    document.body.classList.remove("teacher-login-required");
 
-    // 避免重複建立
+    // 隱藏老師資料，避免顯示載入中或舊資料
+    document.querySelectorAll(
+        ".teacher-detail-page .detail-card"
+    ).forEach(function (card) {
+        card.hidden = true;
+    });
+
+    // 避免重複建立提示
     if (document.getElementById("teacher-login-notice")) {
         return;
     }
 
     const notice = document.createElement("div");
     notice.id = "teacher-login-notice";
-    notice.className = "teacher-login-notice";
+    notice.className = "member-login-screen";
 
     notice.innerHTML = `
-        <div class="teacher-login-card">
-            <div class="teacher-login-icon">
+        <div class="member-login-card">
+
+            <div class="member-login-icon">
                 <i data-lucide="lock-keyhole"></i>
             </div>
 
             <h2>請先登入會員</h2>
 
             <p>
-                登入 TutorLink 後，即可查看與管理你的家教個人資料！
+                登入 TutorLink 後，即可查看與管理<br>
+                你的家教個人資料！
             </p>
 
-            <button type="button" id="teacher-login-button">
+            <button type="button" id="teacher-profile-login-button">
                 立即登入
             </button>
+
         </div>
     `;
 
     document.body.appendChild(notice);
 
-    lucide.createIcons();
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 
-    document.getElementById("teacher-login-button")
+    document.getElementById("teacher-profile-login-button")
         .addEventListener("click", function () {
             openAuthModal("login");
         });
@@ -265,6 +279,9 @@ async function loadTeacherDetail() {
         if (!isMyTeacherProfilePage) {
             loadFavoriteStatus(data.teacher.id);
 
+            // 載入學生課後評價
+            loadTeacherReviews(data.teacher.id);
+
             const favoriteButton = document.getElementById("detail-favorite-button");
 
             if (favoriteButton) {
@@ -329,7 +346,7 @@ function renderTeacherDetail(teacher) {
 
     document.getElementById("detail-teaching-experience").textContent =
         `${experience} 年`;
-    
+
     // 每小時收費
     const hourlyRate = Number(
         teacher.hourlyRate ?? teacher.hourly_rate ?? 0
@@ -389,7 +406,7 @@ function renderTeacherDetail(teacher) {
         // 公開老師詳細頁：維持原本的身分確認機制
         checkTeacherOwnership(teacher.id);
     }
-        
+
     // 將動態新增的 Icon 轉換為 SVG
     lucide.createIcons();
 
@@ -453,7 +470,7 @@ async function checkTeacherOwnership(teacherId) {
     // 只有登入會員才顯示收藏按鈕
     favoriteButton.hidden = !token;
     favoriteButton.disabled = true;
-    
+
     // 未登入：可以看到預約按鈕，點擊後提示登入
     if (!token) {
         if (bookingActions) {
@@ -515,7 +532,7 @@ async function checkTeacherOwnership(teacherId) {
         const isOwner =
             data.teacher &&
             Number(data.teacher.id) === Number(teacherId);
-        
+
         // 不是老師本人且有開放時段，才顯示預約按鈕
         if (bookingActions) {
             bookingActions.hidden =
@@ -576,6 +593,9 @@ function refreshTeacherDetailActions() {
 
     // 重新讀取目前會員的收藏狀態
     loadFavoriteStatus(teacherId);
+
+    // 登入、登出或切換會員後，重新載入學生評價
+    loadTeacherReviews(teacherId);
 }
 
 // ==============================
@@ -882,7 +902,7 @@ function renderTeacherSchedule(availability) {
 
             const cell = document.createElement("td");
 
-            // 公開老師頁：可點擊授課時段    
+            // 公開老師頁：可點擊授課時段
             if (availableSet.has(`${day}-${period.key}`)) {
                 cell.className = "available";
 
@@ -1326,7 +1346,7 @@ function initializeBookingCalendar() {
     }
 
     renderBookingCalendar();
-    
+
     // 尚未選擇日期，先停用開始時間
     resetBookingStartTime();
 }
@@ -1334,7 +1354,7 @@ function initializeBookingCalendar() {
 // 繪製月曆
 function renderBookingCalendar() {
     const calendar = document.getElementById("booking-calendar");
-    
+
     if (!calendar || currentTeacherAvailability.length === 0) return;
 
     calendar.replaceChildren();
@@ -1430,7 +1450,7 @@ function renderBookingCalendar() {
             `${today.year}-` +
             `${String(today.month + 1).padStart(2, "0")}-` +
             `${String(today.day).padStart(2, "0")}`;
-        
+
         // 取得老師所有開放授課的星期
         const availableWeekdays = new Set(
             currentTeacherAvailability.map((item) => Number(item.day))
@@ -1489,7 +1509,7 @@ function changeBookingCalendarMonth(offset) {
     }
 
     renderBookingCalendar();
-    
+
     // 切換月份後，清空開始時間
     resetBookingStartTime();
 }
@@ -1537,7 +1557,7 @@ detailBookingButton?.addEventListener("click", () => {
     if (currentTeacherAvailability.length === 0) {
         return;
     }
-    
+
     // 開啟預約視窗，不預先限制星期與時段
     openBookingModal(null, null);
 });
@@ -1971,3 +1991,788 @@ bookingForm?.addEventListener("submit", async (event) => {
     }
 });
 
+// ==============================
+// 查詢目前會員對指定老師的評價資格
+// ==============================
+async function getMyTeacherReviewStatus(teacherId) {
+    const token = sessionStorage.getItem("tutorlink_token");
+
+    // 統一未具備評價資格時的回傳資料
+    const emptyStatus = {
+        eligible: false,
+        hasReview: false,
+        reviewId: null,
+        reviewContent: "",
+        bookingId: null
+    };
+
+    // 未登入不能撰寫或編輯評價
+    if (!token) {
+        return emptyStatus;
+    }
+
+    const response = await fetch("/api/bookings/me", {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        },
+        cache: "no-store"
+    });
+
+    if (!response.ok) {
+        throw new Error("無法確認評價資格");
+    }
+
+    const data = await response.json();
+
+    // 會員已切換時，不使用舊會員的預約資料
+    if (sessionStorage.getItem("tutorlink_token") !== token) {
+        return null;
+    }
+
+    const bookings = Array.isArray(data.bookings)
+        ? data.bookings
+        : [];
+
+    // 僅接受目前會員以學生身分完成的課程
+    const completedBookings = bookings.filter((booking) => {
+        return (
+            Number(booking.teacher_id) === Number(teacherId) &&
+            booking.is_student_booking === true &&
+            booking.completed_at != null
+        );
+    });
+
+    // 沒有完成課程就沒有評價資格
+    if (completedBookings.length === 0) {
+        return emptyStatus;
+    }
+
+    // 查詢該學生對這位老師是否已有評價
+    const reviewedBooking = completedBookings.find((booking) => {
+        return booking.review_id != null;
+    });
+
+    return {
+        eligible: true,
+        hasReview: Boolean(reviewedBooking),
+        reviewId: reviewedBooking?.review_id ?? null,
+        reviewContent: reviewedBooking?.review_content ?? "",
+        bookingId: completedBookings[0].id
+    };
+}
+
+ // ==============================
+ // 載入老師公開課後評價
+ // ==============================
+async function loadTeacherReviews(teacherId) {
+    const section = document.getElementById("detail-reviews-section");
+    const count = document.getElementById("detail-reviews-count");
+    const list = document.getElementById("detail-reviews-list");
+
+    // 只在有評價區的頁面執行
+    if (!section || !count || !list) return;
+
+    count.textContent = "載入評價中...";
+    list.replaceChildren();
+
+    try {
+        const response = await fetch(
+            `/api/teachers/${encodeURIComponent(teacherId)}/reviews`,
+            { cache: "no-store" }
+        );
+
+        if (!response.ok) {
+            throw new Error("評價資料載入失敗");
+        }
+
+        const data = await response.json();
+        const reviews = Array.isArray(data.reviews)
+            ? data.reviews
+            : [];
+
+        // 取得目前登入會員的評價資格
+        const token = sessionStorage.getItem("tutorlink_token");
+
+        let myReviewId = null;
+        let isReviewTeacherOwner = false;
+
+        if (token) {
+            try {
+                const ownerResponse = await fetch("/api/teachers/me", {
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    },
+                    cache: "no-store"
+                });
+
+                if (ownerResponse.ok) {
+                    const ownerData = await ownerResponse.json();
+
+                    isReviewTeacherOwner =
+                        Number(ownerData.teacher?.id) === Number(teacherId);
+                }
+
+                if (sessionStorage.getItem("tutorlink_token") !== token) {
+                    return;
+                }
+            } catch (error) {
+                console.error("確認評價老師身分失敗：", error);
+            }
+        }
+
+        if (token) {
+            try {
+                const status = await getMyTeacherReviewStatus(teacherId);
+
+                // 查詢期間如果會員切換，捨棄舊結果
+                if (sessionStorage.getItem("tutorlink_token") !== token) {
+                    return;
+                }
+
+                if (status?.hasReview) {
+                    myReviewId = Number(status.reviewId);
+                }
+            } catch (error) {
+                console.error("查詢我的評價狀態失敗：", error);
+            }
+        }
+
+        // 將自己的評價排在最上方
+        const sortedReviews = [...reviews].sort((a, b) => {
+            const aIsMine = Number(a.id) === myReviewId;
+            const bIsMine = Number(b.id) === myReviewId;
+
+            return Number(bIsMine) - Number(aIsMine);
+        });
+
+        count.textContent = `共 ${reviews.length} 則評價`;
+
+        // 已完成課程、尚未評價：顯示撰寫評價入口
+        if (token && !isReviewTeacherOwner && myReviewId === null) {
+            try {
+                const status = await getMyTeacherReviewStatus(teacherId);
+
+                // 避免登入會員已切換時顯示舊資料
+                if (sessionStorage.getItem("tutorlink_token") !== token) {
+                    return;
+                }
+
+                if (status?.eligible && !status.hasReview) {
+                    const actionArea = document.createElement("div");
+                    actionArea.className = "detail-review-write-area";
+
+                    const message = document.createElement("p");
+                    message.textContent =
+                        "你已完成這位老師的課程，歡迎分享上課心得。";
+
+                    const writeButton = document.createElement("button");
+                    writeButton.type = "button";
+                    writeButton.className = "detail-review-edit-button";
+                    writeButton.id = "detail-review-write-button";
+
+                    const icon = document.createElement("i");
+                    icon.setAttribute("data-lucide", "pencil-line");
+
+                    const text = document.createElement("span");
+                    text.textContent = "撰寫評價";
+
+                    writeButton.append(icon, text);
+
+                    writeButton.addEventListener("click", function () {
+                        openDetailReviewModal("create");
+                    });
+
+                    actionArea.append(message, writeButton);
+
+                    list.appendChild(actionArea);
+
+                    if (window.lucide) {
+                        lucide.createIcons();
+                    }
+                }
+            } catch (error) {
+                console.error("確認撰寫評價資格失敗：", error);
+            }
+        }
+
+        if (reviews.length === 0) {
+            const empty = document.createElement("p");
+            empty.className = "detail-reviews-empty";
+            empty.textContent = "目前尚無學生評價";
+            list.appendChild(empty);
+            return;
+        }
+
+        sortedReviews.forEach(function (review) {
+            // 每組學生評價與老師回覆的外層容器
+            const reviewGroup = document.createElement("div");
+            reviewGroup.className = "detail-review-group";
+
+            const item = document.createElement("article");
+            item.className = "detail-review-item";
+            item.dataset.reviewId = review.id;
+
+            // ==============================
+            // 學生名稱與日期
+            // ==============================
+            const header = document.createElement("div");
+            header.className = "detail-review-header";
+
+            const name = document.createElement("strong");
+            name.className = "detail-review-name";
+            name.textContent = review.student_name || "學生會員";
+
+            const date = document.createElement("time");
+            date.className = "detail-review-date";
+
+            if (review.created_at) {
+                date.dateTime = review.created_at;
+                date.textContent = review.created_at
+                    .slice(0, 10)
+                    .replaceAll("-", "/");
+            }
+
+            header.append(name, date);
+
+            // ==============================
+            // 學生評價內容
+            // ==============================
+            const content = document.createElement("p");
+            content.className = "detail-review-content detail-review-content-display";
+
+            const contentText = document.createElement("span");
+            contentText.textContent = review.content || "";
+
+            content.appendChild(contentText);
+
+            // 學生有編輯過才顯示（已編輯）
+            if (review.review_edited_at) {
+                const edited = document.createElement("span");
+                edited.className = "detail-review-edited";
+                edited.textContent = "（已編輯）";
+                edited.style.color = "#999";
+                edited.style.fontSize = "12px";
+                edited.style.marginLeft = "6px";
+
+                content.appendChild(edited);
+            }
+
+            item.append(header, content);
+
+            // ==============================
+            // 學生自己的評價：顯示編輯按鈕
+            // ==============================
+            if (
+                !isReviewTeacherOwner &&
+                myReviewId !== null &&
+                Number(review.id) === myReviewId
+            ) {
+                // 標示這是目前學生自己的評價
+                item.classList.add("detail-review-mine");
+
+                const actionArea = document.createElement("div");
+                actionArea.className = "detail-review-actions";
+
+                const editButton = document.createElement("button");
+                editButton.type = "button";
+                editButton.className = "detail-review-edit-button";
+
+                const editIcon = document.createElement("i");
+                editIcon.setAttribute("data-lucide", "pencil");
+
+                const editText = document.createElement("span");
+                editText.textContent = "編輯評價";
+
+                editButton.append(editIcon, editText);
+
+                editButton.addEventListener("click", function () {
+                    openDetailReviewModal(
+                        "edit",
+                        review.id,
+                        review.content || ""
+                    );
+                });
+
+                actionArea.appendChild(editButton);
+                item.appendChild(actionArea);
+            }
+
+            // 先加入學生評價，讓老師回覆顯示在下方
+            reviewGroup.appendChild(item);
+
+            // ==============================
+            // 老師回覆
+            // ==============================
+            if (review.teacher_reply) {
+                const reply = document.createElement("div");
+                reply.className = "detail-review-reply";
+
+                const replyTitle = document.createElement("strong");
+                replyTitle.className = "detail-review-reply-title";
+                replyTitle.textContent = "老師回覆";
+
+                const replyContent = document.createElement("p");
+                replyContent.className = "detail-review-reply-content";
+
+                const replyText = document.createElement("span");
+                replyText.textContent = review.teacher_reply;
+
+                replyContent.appendChild(replyText);
+
+                // 老師有編輯過才顯示（已編輯）
+                if (review.teacher_reply_edited_at) {
+                    const edited = document.createElement("span");
+                    edited.className = "detail-review-edited";
+                    edited.textContent = "（已編輯）";
+                    edited.style.color = "#999";
+                    edited.style.fontSize = "12px";
+                    edited.style.marginLeft = "6px";
+
+                    replyContent.appendChild(edited);
+                }
+
+                reply.append(replyTitle, replyContent);
+                reviewGroup.appendChild(reply);
+            }
+
+            // 老師本人：顯示回覆或編輯回覆按鈕
+            if (isReviewTeacherOwner) {
+                const replyActions = document.createElement("div");
+                replyActions.className = "detail-review-actions";
+
+                const replyButton = document.createElement("button");
+                replyButton.type = "button";
+                replyButton.className = "detail-review-edit-button";
+
+                const hasReply = Boolean(review.teacher_reply);
+                replyButton.dataset.reviewId = review.id;
+                replyButton.dataset.replyContent = review.teacher_reply || "";
+
+                const replyIcon = document.createElement("i");
+                replyIcon.setAttribute(
+                    "data-lucide",
+                    hasReply ? "pencil" : "message-square-plus"
+                );
+
+                const replyText = document.createElement("span");
+                replyText.textContent = hasReply ? "編輯回覆" : "回覆評價";
+
+                replyButton.append(replyIcon, replyText);
+
+                replyButton.addEventListener("click", function () {
+                    openDetailReviewModal(
+                        hasReply ? "reply-edit" : "reply",
+                        review.id,
+                        review.teacher_reply || ""
+                    );
+                });
+
+                replyActions.appendChild(replyButton);
+
+                if (hasReply) {
+                    // 已有回覆：將編輯按鈕放進老師回覆框
+                    const teacherReply = reviewGroup.querySelector(
+                        ".detail-review-reply"
+                    );
+
+                    if (teacherReply) {
+                        teacherReply.appendChild(replyActions);
+                    }
+                } else {
+                    // 尚未回覆：按鈕放在學生評價框外面
+                    reviewGroup.appendChild(replyActions);
+                }
+            }
+
+            list.appendChild(reviewGroup);
+        });
+
+        // 更新評價區新增的 Lucide 圖示
+        if (window.lucide) {lucide.createIcons();}
+
+        // 從通知中心進入：定位指定評論
+        const params = new URLSearchParams(window.location.search);
+        const targetReviewId = params.get("review_id");
+
+        if (
+            targetReviewId &&
+            window.location.hash === "#detail-reviews-section"
+        ) {
+            const targetReview = Array.from(
+                list.querySelectorAll(".detail-review-item")
+            ).find(
+                (item) => item.dataset.reviewId === targetReviewId
+            );
+
+            if (targetReview) {
+                requestAnimationFrame(() => {
+                    targetReview.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                });
+            }
+        }
+
+    } catch (error) {
+        console.error("載入學生評價失敗：", error);
+        count.textContent = "";
+        list.replaceChildren();
+
+        const message = document.createElement("p");
+        message.className = "detail-reviews-error";
+        message.textContent = "目前無法載入學生評價，請稍後再試。";
+        list.appendChild(message);
+    }
+}
+
+// ==============================
+// 學生課後評價：展開式表單開啟與關閉
+// ==============================
+const detailReviewModal = document.getElementById("detail-review-modal");
+const detailReviewForm = document.getElementById("detail-review-form");
+const detailReviewContent = document.getElementById("detail-review-content");
+const detailReviewTitle = document.getElementById("detail-review-modal-title");
+const detailReviewSubmit = document.getElementById("detail-review-submit");
+const detailReviewCount = document.getElementById("detail-review-character-count");
+const detailReviewError = document.getElementById("detail-review-error");
+
+// 目前操作模式：create / edit
+let detailReviewMode = "create";
+let detailEditingReviewId = null;
+
+// 開啟評價視窗
+function openDetailReviewModal(mode, reviewId = null, content = "") {
+    if (!detailReviewModal) return;
+
+    // 避免上一個編輯狀態殘留
+    if (!detailReviewModal.hidden) {
+        closeDetailReviewModal();
+    }
+
+    detailReviewMode = mode;
+    detailEditingReviewId = reviewId;
+
+    const isTeacherReply = mode === "reply" || mode === "reply-edit";
+    const isEditing = mode === "edit" || mode === "reply-edit";
+
+    detailReviewTitle.textContent = isTeacherReply
+        ? (isEditing ? "編輯老師回覆" : "回覆學生評價")
+        : (isEditing ? "編輯評價" : "撰寫評價");
+
+    detailReviewSubmit.textContent = isEditing
+        ? "儲存修改"
+        : (isTeacherReply ? "送出回覆" : "送出評價");
+
+    detailReviewContent.value = isEditing ? content : "";
+    detailReviewCount.textContent = detailReviewContent.value.length;
+
+    detailReviewError.textContent = "";
+    detailReviewError.hidden = true;
+
+    const reviewCard = document.querySelector(
+        `.detail-review-item[data-review-id="${reviewId}"]`
+    );
+
+    const reviewGroup = reviewCard?.closest(".detail-review-group");
+
+    const editorHeader = detailReviewModal.querySelector(
+        ".detail-review-editor-header"
+    );
+
+    if (isEditing && reviewCard) {
+        const targetContent = isTeacherReply
+            ? reviewGroup?.querySelector(".detail-review-reply-content")
+            : reviewCard.querySelector(".detail-review-content-display");
+
+        const targetActions = isTeacherReply
+            ? reviewGroup?.querySelector(
+                ".detail-review-reply .detail-review-actions"
+            )
+            : reviewCard.querySelector(".detail-review-actions");
+
+        if (targetContent) {
+            targetContent.hidden = true;
+            targetContent.after(detailReviewModal);
+        }
+
+        if (targetActions) {
+            targetActions.hidden = true;
+        }
+
+        if (editorHeader) {
+            editorHeader.hidden = true;
+        }
+    } else if (isTeacherReply && reviewGroup) {
+        // 第一次回覆：在學生評價下方開啟表單
+        reviewGroup.appendChild(detailReviewModal);
+
+        const replyActions = reviewGroup.querySelector(
+            ":scope > .detail-review-actions"
+        );
+
+        if (replyActions) {
+            replyActions.hidden = true;
+        }
+
+        if (editorHeader) {
+            editorHeader.hidden = false;
+        }
+    } else {
+        const reviewList = document.getElementById("detail-reviews-list");
+
+        if (reviewList) {
+            reviewList.before(detailReviewModal);
+        }
+
+        if (editorHeader) {
+            editorHeader.hidden = false;
+        }
+    }
+
+    detailReviewModal.hidden = false;
+    detailReviewContent.focus();
+
+    if (window.lucide) {
+        lucide.createIcons();
+    }
+}
+
+// 關閉評價視窗
+function closeDetailReviewModal() {
+    if (!detailReviewModal || detailReviewSubmit?.disabled) return;
+
+    const editingGroup = detailReviewModal.closest(".detail-review-group");
+    const editingCard = detailReviewModal.closest(".detail-review-item");
+
+    if (editingGroup) {
+        const studentContent = editingGroup.querySelector(
+            ".detail-review-content-display"
+        );
+
+        const teacherContent = editingGroup.querySelector(
+            ".detail-review-reply-content"
+        );
+
+        const actions = editingGroup.querySelectorAll(
+            ".detail-review-actions"
+        );
+
+        if (studentContent) {
+            studentContent.hidden = false;
+        }
+
+        if (teacherContent) {
+            teacherContent.hidden = false;
+        }
+
+        actions.forEach(function (action) {
+            action.hidden = false;
+        });
+    } else if (editingCard) {
+        const reviewContent = editingCard.querySelector(
+            ".detail-review-content-display"
+        );
+
+        if (reviewContent) {
+            reviewContent.hidden = false;
+        }
+    }
+
+    detailReviewModal.hidden = true;
+    detailReviewForm?.reset();
+
+    const reviewList = document.getElementById("detail-reviews-list");
+
+    if (reviewList) {
+        reviewList.before(detailReviewModal);
+    }
+
+    detailReviewMode = "create";
+    detailEditingReviewId = null;
+}
+
+// 點擊右上角 X
+document.getElementById("detail-review-modal-close")
+    ?.addEventListener("click", closeDetailReviewModal);
+
+// 點擊取消
+document.getElementById("detail-review-cancel")
+    ?.addEventListener("click", closeDetailReviewModal);
+
+// 按下 Escape 關閉
+document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && detailReviewModal && !detailReviewModal.hidden) {
+        closeDetailReviewModal();
+    }
+});
+
+// 即時更新字數
+detailReviewContent?.addEventListener("input", function () {
+    detailReviewCount.textContent = detailReviewContent.value.length;
+});
+
+// ==============================
+// 學生課後評價：新增與編輯
+// ==============================
+detailReviewForm?.addEventListener("submit", async function (event) {
+    event.preventDefault();
+
+    if (detailReviewSubmit.disabled) return;
+
+    const content = detailReviewContent.value.trim();
+    const token = sessionStorage.getItem("tutorlink_token");
+
+    const isTeacherReply = (
+        detailReviewMode === "reply" ||
+        detailReviewMode === "reply-edit"
+    );
+
+    // 清除前一次錯誤
+    detailReviewError.textContent = "";
+    detailReviewError.hidden = true;
+
+    if (!token) {
+        detailReviewError.textContent = "請先登入會員。";
+        detailReviewError.hidden = false;
+        return;
+    }
+
+    if (!content || content.length > 200) {
+        detailReviewError.textContent = isTeacherReply
+            ? "請輸入 1～200 字的回覆內容。"
+            : "請輸入 1～200 字的評價內容。";
+        detailReviewError.hidden = false;
+        return;
+    }
+
+    const isEditing = (
+        detailReviewMode === "edit" ||
+        detailReviewMode === "reply-edit"
+    );
+
+    const currentTeacherId = teacherId;
+
+    if (!currentTeacherId || !/^[1-9]\d*$/.test(currentTeacherId)) {
+        detailReviewError.textContent = "老師資料不正確，請重新整理頁面。";
+        detailReviewError.hidden = false;
+        return;
+    }
+
+    if (isEditing && !detailEditingReviewId) {
+        detailReviewError.textContent = "找不到要編輯的評價。";
+        detailReviewError.hidden = false;
+        return;
+    }
+
+    const originalText = detailReviewSubmit.textContent;
+    detailReviewSubmit.disabled = true;
+    detailReviewSubmit.textContent = "處理中...";
+
+    try {
+        let url;
+        let method;
+        let body;
+
+        if (isTeacherReply) {
+            // 老師首次回覆或修改回覆，使用同一支 API
+            url = `/api/reviews/${encodeURIComponent(detailEditingReviewId)}/reply`;
+            method = "PATCH";
+            body = { content };
+
+        } else if (isEditing) {
+            // 學生修改自己的評價
+            url = `/api/reviews/${encodeURIComponent(detailEditingReviewId)}`;
+            method = "PATCH";
+            body = { content };
+
+        } else {
+            // 查詢已完成課程，取得可評價的預約 ID
+            const status = await getMyTeacherReviewStatus(currentTeacherId);
+
+            if (!status?.eligible || status.hasReview || !status.bookingId) {
+                throw new Error("目前沒有可評價的已完成課程。");
+            }
+
+            url = "/api/reviews";
+            method = "POST";
+            body = {
+                booking_id: status.bookingId,
+                content
+            };
+        }
+
+        // 避免切換帳號後使用舊憑證送出
+        if (sessionStorage.getItem("tutorlink_token") !== token) {
+            throw new Error("會員登入狀態已改變，請重新操作。");
+        }
+
+        const response = await fetch(url, {
+            method,
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            const detail = errorData.detail;
+
+            throw new Error(
+                typeof detail === "string"
+                    ? detail
+                    : isEditing
+                        ? "修改評價失敗，請稍後再試。"
+                        : "送出評價失敗，請稍後再試。"
+            );
+        }
+
+        if (sessionStorage.getItem("tutorlink_token") !== token) {
+            return;
+        }
+
+        // 成功後關閉表單並重新載入評價
+        detailReviewSubmit.disabled = false;
+        closeDetailReviewModal();
+
+        await loadTeacherReviews(currentTeacherId);
+
+    } catch (error) {
+        if (sessionStorage.getItem("tutorlink_token") !== token) {
+            return;
+        }
+
+        console.error("儲存學生評價失敗：", error);
+        detailReviewError.textContent = error.message;
+        detailReviewError.hidden = false;
+
+    } finally {
+        detailReviewSubmit.disabled = false;
+        detailReviewSubmit.textContent = originalText;
+    }
+});
+
+
+window.addEventListener("load", () => {
+    if (
+        window.location.hash !== "#detail-reviews-section" ||
+        new URLSearchParams(window.location.search).has("review_id")
+    ) {
+        return;
+    }
+
+    const reviewsSection = document.getElementById(
+        "detail-reviews-section"
+    );
+
+    if (!reviewsSection) return;
+
+    setTimeout(() => {
+        reviewsSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }, 500);
+});

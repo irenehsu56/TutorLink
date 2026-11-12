@@ -6236,16 +6236,17 @@ def get_ecpay_payment_status(
 # ==============================
 # 綠界 Sandbox 付款狀態同步
 # POST /api/payments/{payment_id}/sync
-# 目前僅允許同步測試付款 ID = 8
+# 允許所有符合條件的 Sandbox 訂單同步付款狀態
 @app.post("/api/payments/{payment_id}/sync", tags=["09｜第三方付款 Payments"])
 def sync_ecpay_payment(
     payment_id: int,
     user_id: int = Depends(get_current_user_id)
 ):
-    if ECPAY_ENV != "stage" or payment_id != 8:
+    # 僅允許 Sandbox 環境使用
+    if ECPAY_ENV != "stage":
         raise HTTPException(
             status_code=403,
-            detail="目前僅允許同步 Sandbox 測試付款 ID = 8"
+            detail="此付款同步 API 僅供 Sandbox 測試"
         )
 
     connection = None

@@ -244,7 +244,7 @@ def build_ecpay_payment_params(
         "TotalAmount": str(amount),
         "TradeDesc": "TutorLink tutoring lesson payment",
         "ItemName": "TutorLink tutoring lesson",
-        "ReturnURL": "https://luncheon-elastic-unpledged.ngrok-free.dev/api/payments/ecpay/notify",
+        "ReturnURL": "https://tutorlink.life/api/payments/ecpay/notify",
         "ChoosePayment": "Credit",
         "EncryptType": "1"
     }
